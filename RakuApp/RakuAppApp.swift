@@ -13,18 +13,20 @@ import Firebase
 struct RakuAppApp: App {
     @StateObject private var authVM = AuthViewModel()
     
-    init (){
+    init(){
         FirebaseApp.configure()
         
-        #if DEBUG
-            let providerFactory = AppCheckProviderFactory()
-            AppCheck.setAppCheckProviderFactory(providerFactory)
-        #endif
+    #if DEBUG
+        let providerFactory = AppCheckDebugProviderFactory()
+        AppCheck.setAppCheckProviderFactory(providerFactory)
+    #endif
+        
     }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(authVM)
         }
     }
 }
