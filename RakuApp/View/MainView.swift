@@ -1,0 +1,45 @@
+//
+//  MainView.swift
+//  RakuApp
+//
+//  Created by Surya on 22/05/25.
+//
+
+import SwiftUI
+struct MainView: View {
+    @EnvironmentObject var authVM: AuthViewModel
+
+    var body: some View {
+        Group {
+            if !authVM.isSignedIn {
+                SplashView()
+            } else {
+                TabView {
+                    MatchView()
+                        .tabItem {
+                            Image(systemName: "sportscourt.fill")
+                            Text("Matches")
+                        }
+
+                    LearnView()
+                        .tabItem {
+                            Image(systemName: "book.pages.fill")
+                            Text("Learn")
+                        }
+
+                    ActivityView()
+                        .tabItem {
+                            Image(systemName: "figure.badminton")
+                            Text("Activity")
+                        }
+                }
+            }
+        }
+    }
+}
+
+
+#Preview {
+    MainView()
+        .environmentObject(AuthViewModel())
+}
