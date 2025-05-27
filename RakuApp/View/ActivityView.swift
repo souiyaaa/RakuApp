@@ -1,3 +1,10 @@
+//
+//  ActivityView.swift
+//  RakuApp
+//
+//  Created by student on 27/05/25.
+//
+
 import SwiftUI
 
 struct ActivityView: View {
