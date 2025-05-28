@@ -10,7 +10,10 @@ import SwiftUI
 struct RegisterView: View {
     @Binding var registerClicked: Bool
     @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var userVM: UserViewModel
     
+
+
     var body: some View {
         ZStack {
 
@@ -78,18 +81,7 @@ struct RegisterView: View {
                 .padding(.bottom, 40)
 
                 VStack {
-                    TextField("Name", text: $authVM.myUser.name)
-                        .padding(.horizontal, 16)
-                        .frame(width: 361, height: 50)
-                        .background(Color(hex: "F1F4FF"))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color(hex: "1F41BA"), lineWidth: 1)
-                        )
-                        .cornerRadius(8)
-                        .padding(.bottom, 12)
-                    
-                    TextField("Email", text: $authVM.myUser.email)
+                    TextField("Name", text: $userVM.myUserData.name)
                         .padding(.horizontal, 16)
                         .frame(width: 361, height: 50)
                         .background(Color(hex: "F1F4FF"))
@@ -100,7 +92,18 @@ struct RegisterView: View {
                         .cornerRadius(8)
                         .padding(.bottom, 12)
 
-                    TextField("Password", text: $authVM.myUser.password)
+                    TextField("Email", text: $userVM.myUserData.email)
+                        .padding(.horizontal, 16)
+                        .frame(width: 361, height: 50)
+                        .background(Color(hex: "F1F4FF"))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color(hex: "1F41BA"), lineWidth: 1)
+                        )
+                        .cornerRadius(8)
+                        .padding(.bottom, 12)
+
+                    SecureField("Password", text: $userVM.myUserData.password)
                         .padding(.horizontal, 16)
                         .frame(width: 361, height: 50)
                         .background(Color(hex: "F1F4FF"))
@@ -110,16 +113,18 @@ struct RegisterView: View {
                         )
                         .cornerRadius(8)
                 }
-                
 
                 Button(
                     action: {
                         Task {
-                            await authVM.signUp()
+                            await authVM.signUp(
+                                email: userVM.myUserData.email,
+                                password: userVM.myUserData.password,
+                                name: userVM.myUserData.name)
                             if !authVM.falseCredential {
                                 authVM.checkUserSession()
-//                                showAuthPage = !authVM.isSignedIn
-                                authVM.myUser = MyUser()
+                                // Clear user data after signup
+                                userVM.myUserData = MyUser()
                                 authVM.isSignedIn = true
                             }
                         }
@@ -134,17 +139,17 @@ struct RegisterView: View {
                 }
                 .frame(width: 361, height: 50)
                 .padding(.top, 80)
-                
+
                 Button(
                     action: {
                         registerClicked = false
                     }
                 ) {
-                Text("Already have an account")
+                    Text("Already have an account")
                         .foregroundColor(Color(hex: "1F41BA"))
                         .fontWeight(.medium)
                 }
-                .padding(.top,8)
+                .padding(.top, 8)
 
                 Spacer()
 
@@ -156,8 +161,10 @@ struct RegisterView: View {
 }
 
 #Preview {
-    RegisterView(
-        registerClicked: .constant(true)
-    )
-    .environmentObject(AuthViewModel())
+    let userVM = UserViewModel()
+    let authVM = AuthViewModel(userViewModel: userVM)
+
+    return RegisterView(registerClicked: .constant(true))
+        .environmentObject(authVM)
+        .environmentObject(userVM)
 }

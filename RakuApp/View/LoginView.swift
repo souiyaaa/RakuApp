@@ -10,6 +10,7 @@ import SwiftUI
 struct LoginView: View {
     @Binding var showAuthPage: Bool
     @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var userVM: UserViewModel
     @State var registerClicked: Bool = false
     
     var body: some View {
@@ -79,7 +80,7 @@ struct LoginView: View {
                 .padding(.bottom, 40)
                 
                 VStack {
-                    TextField("Email", text: $authVM.myUser.email)
+                    TextField("Email", text: $userVM.myUserData.email)
                         .padding(.horizontal, 16)
                         .frame(width: 361, height: 50)
                         .background(Color(hex: "F1F4FF"))
@@ -90,7 +91,7 @@ struct LoginView: View {
                         .cornerRadius(8)
                         .padding(.bottom, 12)
                     
-                    TextField("Password", text: $authVM.myUser.password)
+                    TextField("Password", text:  $userVM.myUserData.password)
                         .padding(.horizontal, 16)
                         .frame(width: 361, height: 50)
                         .background(Color(hex: "F1F4FF"))
@@ -113,11 +114,11 @@ struct LoginView: View {
                 Button(
                     action: {
                         Task {
-                            await authVM.signIn()
+                            await authVM.signIn(email: userVM.myUserData.email, password: userVM.myUserData.password)
                             if !authVM.falseCredential {
                                 authVM.checkUserSession()
                                 showAuthPage = !authVM.isSignedIn
-                                authVM.myUser = MyUser()
+                                userVM.myUserData = MyUser()
                                 authVM.isSignedIn = true
                             }
                         }
@@ -156,8 +157,13 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView(
+    let userVM = UserViewModel()
+    let authVM = AuthViewModel(userViewModel: userVM)
+    
+    
+    return LoginView(
         showAuthPage: .constant(true)
     )
-    .environmentObject(AuthViewModel())
+    .environmentObject(authVM)
+    .environmentObject(userVM)
 }
