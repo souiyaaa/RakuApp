@@ -14,3 +14,4 @@ struct MyUser: Identifiable, Hashable, Codable{
     var password: String = ""
     var experience: String = "beginner"
 }
+
