@@ -10,7 +10,10 @@ import SwiftUI
 struct RegisterView: View {
     @Binding var registerClicked: Bool
     @EnvironmentObject var authVM: AuthViewModel
-    
+    @EnvironmentObject var userVM: UserViewModel
+
+    @State var experience: String = ""
+
     var body: some View {
         ZStack {
 
@@ -78,18 +81,7 @@ struct RegisterView: View {
                 .padding(.bottom, 40)
 
                 VStack {
-                    TextField("Name", text: $authVM.myUser.name)
-                        .padding(.horizontal, 16)
-                        .frame(width: 361, height: 50)
-                        .background(Color(hex: "F1F4FF"))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color(hex: "1F41BA"), lineWidth: 1)
-                        )
-                        .cornerRadius(8)
-                        .padding(.bottom, 12)
-                    
-                    TextField("Email", text: $authVM.myUser.email)
+                    TextField("Name", text: $userVM.myUserData.name)
                         .padding(.horizontal, 16)
                         .frame(width: 361, height: 50)
                         .background(Color(hex: "F1F4FF"))
@@ -100,7 +92,7 @@ struct RegisterView: View {
                         .cornerRadius(8)
                         .padding(.bottom, 12)
 
-                    TextField("Password", text: $authVM.myUser.password)
+                    TextField("Email", text: $userVM.myUserData.email)
                         .padding(.horizontal, 16)
                         .frame(width: 361, height: 50)
                         .background(Color(hex: "F1F4FF"))
@@ -109,17 +101,91 @@ struct RegisterView: View {
                                 .stroke(Color(hex: "1F41BA"), lineWidth: 1)
                         )
                         .cornerRadius(8)
+                        .padding(.bottom, 12)
+
+                    SecureField("Password", text: $userVM.myUserData.password)
+                        .padding(.horizontal, 16)
+                        .frame(width: 361, height: 50)
+                        .background(Color(hex: "F1F4FF"))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color(hex: "1F41BA"), lineWidth: 1)
+                        )
+                        .cornerRadius(8)
+
+                    HStack {
+                        Text("Experience")
+
+                        Spacer()
+                    }
+                    .padding(.leading, 20)
+                    .padding(.top, 20)
+
+                    HStack {
+                        Button(action: {
+                            userVM.myUserData.experience = "Beginner"
+                        }) {
+                            Text("Beginner ")
+                                .foregroundColor(Color(hex: "253366"))
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                                .background(Color.white)
+                                .cornerRadius(12)  // rounded corners
+                                .shadow(
+                                    color: Color.black.opacity(0.1), radius: 4,
+                                    x: 0,
+                                    y: 2)  // gentle shadow
+                        }
+
+                        Spacer()
+                        Button(action: {
+                            userVM.myUserData.experience = "Advanced"
+                        }) {
+                            Text("Advanced ")
+                                .foregroundColor(Color(hex: "253366"))
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                                .background(Color.white)
+                                .cornerRadius(12)  // rounded corners
+                                .shadow(
+                                    color: Color.black.opacity(0.1), radius: 4,
+                                    x: 0,
+                                    y: 2)  // gentle shadow
+                        }
+
+                        Spacer()
+
+                        Button(action: {
+                            userVM.myUserData.experience = "Professional"
+                        }) {
+                            Text("Pro ")
+                                .foregroundColor(Color(hex: "253366"))
+                                .padding(.horizontal, 32)
+                                .padding(.vertical, 8)
+                                .background(Color.white)
+                                .cornerRadius(12)  // rounded corners
+                                .shadow(
+                                    color: Color.black.opacity(0.1), radius: 4,
+                                    x: 0,
+                                    y: 2)  // gentle shadow
+                        }
+                    }
+                    .padding(.horizontal, 20)
+
                 }
-                
 
                 Button(
                     action: {
                         Task {
-                            await authVM.signUp()
+                            await authVM.signUp(
+                                email: userVM.myUserData.email,
+                                password: userVM.myUserData.password,
+                                name: userVM.myUserData.name,
+                                experience: userVM.myUserData.experience)
                             if !authVM.falseCredential {
                                 authVM.checkUserSession()
-//                                showAuthPage = !authVM.isSignedIn
-                                authVM.myUser = MyUser()
+                                // Clear user data after signup
+                                userVM.myUserData = MyUser()
                                 authVM.isSignedIn = true
                             }
                         }
@@ -134,17 +200,17 @@ struct RegisterView: View {
                 }
                 .frame(width: 361, height: 50)
                 .padding(.top, 80)
-                
+
                 Button(
                     action: {
                         registerClicked = false
                     }
                 ) {
-                Text("Already have an account")
+                    Text("Already have an account")
                         .foregroundColor(Color(hex: "1F41BA"))
                         .fontWeight(.medium)
                 }
-                .padding(.top,8)
+                .padding(.top, 8)
 
                 Spacer()
 
@@ -156,8 +222,10 @@ struct RegisterView: View {
 }
 
 #Preview {
-    RegisterView(
-        registerClicked: .constant(true)
-    )
-    .environmentObject(AuthViewModel())
+    let userVM = UserViewModel()
+    let authVM = AuthViewModel(userViewModel: userVM)
+
+    RegisterView(registerClicked: .constant(true))
+        .environmentObject(authVM)
+        .environmentObject(userVM)
 }
