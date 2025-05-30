@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3FD403D22DE99BD90017EB30 /* RakuAppWatchOS Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 3FD403C42DE99BD70017EB30 /* RakuAppWatchOS Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		3FD403D82DE99BF90017EB30 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD403D72DE99BF90017EB30 /* WatchConnectivity.framework */; };
+		3FD403DA2DE99C010017EB30 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD403D92DE99C010017EB30 /* WatchConnectivity.framework */; };
 		D8E286082DDE14120038DA9A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D8E286072DDE14120038DA9A /* FirebaseAnalytics */; };
 		D8E2860A2DDE14120038DA9A /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = D8E286092DDE14120038DA9A /* FirebaseAppCheck */; };
 		D8E2860C2DDE14120038DA9A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D8E2860B2DDE14120038DA9A /* FirebaseAuth */; };
@@ -16,11 +19,43 @@
 		D8E2861A2DDE1D440038DA9A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D8E286192DDE1D440038DA9A /* GoogleSignInSwift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		3FD403CF2DE99BD90017EB30 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D8E285962DDE0FBA0038DA9A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3FD403C32DE99BD70017EB30;
+			remoteInfo = "RakuAppWatchOS Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3FD403D12DE99BD90017EB30 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				3FD403D22DE99BD90017EB30 /* RakuAppWatchOS Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		3FD403C42DE99BD70017EB30 /* RakuAppWatchOS Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RakuAppWatchOS Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FD403D72DE99BF90017EB30 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS11.2.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
+		3FD403D92DE99C010017EB30 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
 		D8E2859E2DDE0FBB0038DA9A /* RakuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RakuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		3FD403C52DE99BD70017EB30 /* RakuAppWatchOS Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "RakuAppWatchOS Watch App";
+			sourceTree = "<group>";
+		};
 		D8E285A02DDE0FBB0038DA9A /* RakuApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = RakuApp;
@@ -29,6 +64,14 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3FD403C12DE99BD70017EB30 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3FD403D82DE99BF90017EB30 /* WatchConnectivity.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D8E2859B2DDE0FBB0038DA9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -38,6 +81,7 @@
 				D8E2861A2DDE1D440038DA9A /* GoogleSignInSwift in Frameworks */,
 				D8E2860C2DDE14120038DA9A /* FirebaseAuth in Frameworks */,
 				D8E2860E2DDE14120038DA9A /* FirebaseCore in Frameworks */,
+				3FD403DA2DE99C010017EB30 /* WatchConnectivity.framework in Frameworks */,
 				D8E286082DDE14120038DA9A /* FirebaseAnalytics in Frameworks */,
 				D8E286182DDE1D440038DA9A /* GoogleSignIn in Frameworks */,
 			);
@@ -46,10 +90,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3FD403D62DE99BF90017EB30 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3FD403D92DE99C010017EB30 /* WatchConnectivity.framework */,
+				3FD403D72DE99BF90017EB30 /* WatchConnectivity.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D8E285952DDE0FBA0038DA9A = {
 			isa = PBXGroup;
 			children = (
 				D8E285A02DDE0FBB0038DA9A /* RakuApp */,
+				3FD403C52DE99BD70017EB30 /* RakuAppWatchOS Watch App */,
+				3FD403D62DE99BF90017EB30 /* Frameworks */,
 				D8E2859F2DDE0FBB0038DA9A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -58,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				D8E2859E2DDE0FBB0038DA9A /* RakuApp.app */,
+				3FD403C42DE99BD70017EB30 /* RakuAppWatchOS Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -65,6 +121,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		3FD403C32DE99BD70017EB30 /* RakuAppWatchOS Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3FD403D52DE99BD90017EB30 /* Build configuration list for PBXNativeTarget "RakuAppWatchOS Watch App" */;
+			buildPhases = (
+				3FD403C02DE99BD70017EB30 /* Sources */,
+				3FD403C12DE99BD70017EB30 /* Frameworks */,
+				3FD403C22DE99BD70017EB30 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				3FD403C52DE99BD70017EB30 /* RakuAppWatchOS Watch App */,
+			);
+			name = "RakuAppWatchOS Watch App";
+			packageProductDependencies = (
+			);
+			productName = "RakuAppWatchOS Watch App";
+			productReference = 3FD403C42DE99BD70017EB30 /* RakuAppWatchOS Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 		D8E2859D2DDE0FBB0038DA9A /* RakuApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D8E285AC2DDE0FBC0038DA9A /* Build configuration list for PBXNativeTarget "RakuApp" */;
@@ -72,10 +150,12 @@
 				D8E2859A2DDE0FBB0038DA9A /* Sources */,
 				D8E2859B2DDE0FBB0038DA9A /* Frameworks */,
 				D8E2859C2DDE0FBB0038DA9A /* Resources */,
+				3FD403D12DE99BD90017EB30 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				3FD403D02DE99BD90017EB30 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				D8E285A02DDE0FBB0038DA9A /* RakuApp */,
@@ -104,6 +184,9 @@
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
+					3FD403C32DE99BD70017EB30 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 					D8E2859D2DDE0FBB0038DA9A = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -128,11 +211,19 @@
 			projectRoot = "";
 			targets = (
 				D8E2859D2DDE0FBB0038DA9A /* RakuApp */,
+				3FD403C32DE99BD70017EB30 /* RakuAppWatchOS Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		3FD403C22DE99BD70017EB30 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D8E2859C2DDE0FBB0038DA9A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -143,6 +234,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3FD403C02DE99BD70017EB30 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D8E2859A2DDE0FBB0038DA9A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -152,7 +250,75 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		3FD403D02DE99BD90017EB30 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3FD403C32DE99BD70017EB30 /* RakuAppWatchOS Watch App */;
+			targetProxy = 3FD403CF2DE99BD90017EB30 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		3FD403D32DE99BD90017EB30 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"RakuAppWatchOS Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = Z839L3XLMQ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = RakuAppWatchOS;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = Surya.RakuApp;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Surya.RakuApp.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Debug;
+		};
+		3FD403D42DE99BD90017EB30 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"RakuAppWatchOS Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = Z839L3XLMQ;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = RakuAppWatchOS;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = Surya.RakuApp;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Surya.RakuApp.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Release;
+		};
 		D8E285AA2DDE0FBC0038DA9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -333,6 +499,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3FD403D52DE99BD90017EB30 /* Build configuration list for PBXNativeTarget "RakuAppWatchOS Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3FD403D32DE99BD90017EB30 /* Debug */,
+				3FD403D42DE99BD90017EB30 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D8E285992DDE0FBA0038DA9A /* Build configuration list for PBXProject "RakuApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

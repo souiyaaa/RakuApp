@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ActivityView: View {
+    @StateObject private var ActivityVM = ActivityViewModel()
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -92,4 +94,5 @@ struct ActivityView: View {
 
 #Preview {
     ActivityView()
+        .environmentObject(ActivityViewModel())
 }
