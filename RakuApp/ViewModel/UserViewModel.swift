@@ -8,16 +8,63 @@
 import Foundation
 import FirebaseDatabase
 import FirebaseAuth
+import SwiftUI
 
 
 class UserViewModel: ObservableObject {
     @Published var myUserData: MyUser
+    @Published var myUserDatas: [MyUser]
+    @Published var myUserPicture: UIImage?
     private var ref: DatabaseReference
+    
     
     init(){
         self.myUserData = MyUser()
         self.ref = Database.database().reference().child("UserData")
+        self.myUserDatas = []
+        fetchAllUser()
     }
+    
+    func checkUserPhoto(){
+        if self.myUserData.experience  == "Beginner" {
+            myUserPicture = UIImage(named: "Beginner")
+        } else if self.myUserData.experience  == "Advance" {
+            myUserPicture = UIImage(named: "Advance")
+        } else {
+            myUserPicture = UIImage(named: "Pro")
+        }
+    }
+    
+    
+    //fetch All User
+    func fetchAllUser(){
+        ref.observe(.value) { snapshot in
+            guard let value = snapshot.value as? [String: Any] else {
+                self.myUserDatas = []
+                print("fetch all user is empty")
+                return
+            }
+            self.myUserDatas = value.compactMap { (key, UserData) in
+                guard let userDict = UserData as? [String: Any], let jsonData = try? JSONSerialization.data (withJSONObject: userDict)
+                else { return nil }
+                return try? JSONDecoder().decode(MyUser.self, from: jsonData)
+            }
+        }
+    }
+    
+    //Filter User by name
+    func filterUserByName(byName name: String)-> [MyUser]{
+        if name.isEmpty {
+            return myUserDatas
+        }
+        
+        let filteredUser = myUserDatas.filter {
+            $0.name.lowercased().contains(name.lowercased())
+        }
+        
+        return filteredUser
+    }
+    
     
     //add UserData V1
     func saveUserData(user: MyUser) {
@@ -59,6 +106,7 @@ class UserViewModel: ObservableObject {
             print("JSON encode error: \(error.localizedDescription)")
         }
     }
+    
     
 
     

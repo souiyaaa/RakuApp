@@ -11,8 +11,8 @@ struct RegisterView: View {
     @Binding var registerClicked: Bool
     @EnvironmentObject var authVM: AuthViewModel
     @EnvironmentObject var userVM: UserViewModel
-    
 
+    @State var experience: String = ""
 
     var body: some View {
         ZStack {
@@ -112,6 +112,66 @@ struct RegisterView: View {
                                 .stroke(Color(hex: "1F41BA"), lineWidth: 1)
                         )
                         .cornerRadius(8)
+
+                    HStack {
+                        Text("Experience")
+
+                        Spacer()
+                    }
+                    .padding(.leading, 20)
+                    .padding(.top, 20)
+
+                    HStack {
+                        Button(action: {
+                            userVM.myUserData.experience = "Beginner"
+                        }) {
+                            Text("Beginner ")
+                                .foregroundColor(Color(hex: "253366"))
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                                .background(Color.white)
+                                .cornerRadius(12)  // rounded corners
+                                .shadow(
+                                    color: Color.black.opacity(0.1), radius: 4,
+                                    x: 0,
+                                    y: 2)  // gentle shadow
+                        }
+
+                        Spacer()
+                        Button(action: {
+                            userVM.myUserData.experience = "Advanced"
+                        }) {
+                            Text("Advanced ")
+                                .foregroundColor(Color(hex: "253366"))
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                                .background(Color.white)
+                                .cornerRadius(12)  // rounded corners
+                                .shadow(
+                                    color: Color.black.opacity(0.1), radius: 4,
+                                    x: 0,
+                                    y: 2)  // gentle shadow
+                        }
+
+                        Spacer()
+
+                        Button(action: {
+                            userVM.myUserData.experience = "Professional"
+                        }) {
+                            Text("Pro ")
+                                .foregroundColor(Color(hex: "253366"))
+                                .padding(.horizontal, 32)
+                                .padding(.vertical, 8)
+                                .background(Color.white)
+                                .cornerRadius(12)  // rounded corners
+                                .shadow(
+                                    color: Color.black.opacity(0.1), radius: 4,
+                                    x: 0,
+                                    y: 2)  // gentle shadow
+                        }
+                    }
+                    .padding(.horizontal, 20)
+
                 }
 
                 Button(
@@ -120,7 +180,8 @@ struct RegisterView: View {
                             await authVM.signUp(
                                 email: userVM.myUserData.email,
                                 password: userVM.myUserData.password,
-                                name: userVM.myUserData.name)
+                                name: userVM.myUserData.name,
+                                experience: userVM.myUserData.experience)
                             if !authVM.falseCredential {
                                 authVM.checkUserSession()
                                 // Clear user data after signup
@@ -164,7 +225,7 @@ struct RegisterView: View {
     let userVM = UserViewModel()
     let authVM = AuthViewModel(userViewModel: userVM)
 
-    return RegisterView(registerClicked: .constant(true))
+    RegisterView(registerClicked: .constant(true))
         .environmentObject(authVM)
         .environmentObject(userVM)
 }

@@ -24,6 +24,7 @@ class AuthViewModel: ObservableObject {
         self.isSignedIn = false
         self.falseCredential = false
         self.checkUserSession()
+        self.userViewModel.checkUserPhoto() 
     }
 
     func checkUserSession() {
@@ -36,6 +37,8 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
+    
+  
 
     func signOut() {
         do {
@@ -61,7 +64,7 @@ class AuthViewModel: ObservableObject {
         }
     }
 
-    func signUp(email: String, password: String, name: String) async {
+    func signUp(email: String, password: String, name: String, experience: String) async {
         do {
             let authResult = try await Auth.auth().createUser(
                 withEmail: email, password: password)
@@ -72,11 +75,11 @@ class AuthViewModel: ObservableObject {
             newUser.id = uid
             newUser.email = email
             newUser.name = name
-            newUser.experience = "beginners"
+            newUser.experience = experience
 
             // Save user data via UserViewModel
             userViewModel.saveUserData(
-                user: MyUser(name: name, experience: "beginnerss"))
+                user: MyUser(name: name, experience: experience))
 
             self.falseCredential = false
             self.checkUserSession()
