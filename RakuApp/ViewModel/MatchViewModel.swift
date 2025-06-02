@@ -7,47 +7,61 @@
 
 import Foundation
 import CoreLocation
+import SwiftUI
+
 class MatchViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+    // MARK: - Match Data
+    @Published var match: Match
+    var currentGame: Game? {
+        match.games.last
+    }
+    var participantCount: Int {
+        match.players.count
+    }
+    
+    // MARK: - Location Properties
     private let locationManager = CLLocationManager()
     private let geocoder = CLGeocoder()
-    
     @Published var userLocationDescription: String = "Fetching location..."
     
-    override init() {
+    // MARK: - Init
+    init(match: Match) {
+        self.match = match
         super.init()
-        print("Init masuk 1")
-        locationManager.delegate = self
-        locationManager.requestAlwaysAuthorization()
-        locationManager.startUpdatingLocation()
-        print("Init abis 1")
+        configureLocationServices()
     }
     
-    // 👇 Add this function to manually refresh
+    private func configureLocationServices() {
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        locationManager.startUpdatingLocation()
+    }
+    
+    // MARK: - Manual Location Refresh
     func refreshLocation() {
-        print("Refreshing location...")
+        print("🔄 Refreshing location...")
         locationManager.requestLocation()
         locationManager.startUpdatingLocation()
-        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-    
     }
     
+    // MARK: - CLLocationManagerDelegate
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("Received location update: \(locations)")
+        print("📍 Received location update: \(locations)")
         guard let location = locations.last else { return }
         reverseGeocode(location: location)
-//        // 👇 Optional: stop updates after getting one result to save battery
         locationManager.stopUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Failed to get location: \(error.localizedDescription)")
+        print("❌ Failed to get location: \(error.localizedDescription)")
         userLocationDescription = "Unable to get address"
     }
     
     private func reverseGeocode(location: CLLocation) {
         geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
             if let error = error {
-                print("Geocoding error: \(error.localizedDescription)")
+                print("🧭 Geocoding error: \(error.localizedDescription)")
                 self?.userLocationDescription = "Unable to get address"
                 return
             }
