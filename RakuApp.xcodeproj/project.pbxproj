@@ -17,12 +17,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3FD17D552DEEDA8900C9BD69 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		D8E2859E2DDE0FBB0038DA9A /* RakuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RakuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3FD17D532DEED8B000C9BD69 /* Exceptions for "RakuApp" folder in "RakuApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D8E2859D2DDE0FBB0038DA9A /* RakuApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D8E285A02DDE0FBB0038DA9A /* RakuApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3FD17D532DEED8B000C9BD69 /* Exceptions for "RakuApp" folder in "RakuApp" target */,
+			);
 			path = RakuApp;
 			sourceTree = "<group>";
 		};
@@ -46,10 +60,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3FD17D542DEEDA8800C9BD69 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3FD17D552DEEDA8900C9BD69 /* HealthKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D8E285952DDE0FBA0038DA9A = {
 			isa = PBXGroup;
 			children = (
 				D8E285A02DDE0FBB0038DA9A /* RakuApp */,
+				3FD17D542DEEDA8800C9BD69 /* Frameworks */,
 				D8E2859F2DDE0FBB0038DA9A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -277,12 +300,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RakuApp/RakuApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RakuApp/Preview Content\"";
-				DEVELOPMENT_TEAM = Z839L3XLMQ;
+				DEVELOPMENT_TEAM = 4ZSQLGUNB9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RakuApp/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = Share;
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = Update;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -306,12 +333,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RakuApp/RakuApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RakuApp/Preview Content\"";
-				DEVELOPMENT_TEAM = Z839L3XLMQ;
+				DEVELOPMENT_TEAM = 4ZSQLGUNB9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RakuApp/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = Share;
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = Update;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

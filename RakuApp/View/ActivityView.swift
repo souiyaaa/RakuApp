@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ActivityView: View {
+    @StateObject var viewModel = ActivityViewModel()
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -69,7 +71,7 @@ struct ActivityView: View {
                     .frame(height: 64)
                     .padding(.horizontal)
                     .padding(.top, 20)
-                    WeeklySumView()
+                    WeeklySumView(viewModel: viewModel)
                     Text("Leaderboard")
                         .font(.headline)
                         .padding(.horizontal)

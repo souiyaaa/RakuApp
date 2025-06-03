@@ -12,27 +12,29 @@ struct MainView: View {
     var body: some View {
         Group {
             if !authVM.isSignedIn {
-                SplashView()
+                AnyView(SplashView())
             } else {
-                TabView {
-                    MatchView()
-                        .tabItem {
-                            Image(systemName: "sportscourt.fill")
-                            Text("Matches")
-                        }
+                AnyView(
+                    TabView {
+                        MatchView()
+                            .tabItem {
+                                Image(systemName: "sportscourt.fill")
+                                Text("Matches")
+                            }
 
-                    LearnView()
-                        .tabItem {
-                            Image(systemName: "book.pages.fill")
-                            Text("Learn")
-                        }
+                        LearnView()
+                            .tabItem {
+                                Image(systemName: "book.pages.fill")
+                                Text("Learn")
+                            }
 
-                    ActivityView()
-                        .tabItem {
-                            Image(systemName: "figure.badminton")
-                            Text("Activity")
-                        }
-                }
+                        ActivityView()
+                            .tabItem {
+                                Image(systemName: "figure.badminton")
+                                Text("Activity")
+                            }
+                    }
+                )
             }
         }
     }
