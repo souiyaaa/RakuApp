@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct WeeklySumView: View {
-    @StateObject var viewModel: ActivityViewModel
+    @EnvironmentObject  var activityVM: ActivityViewModel
 
     var body: some View {
         ZStack {
@@ -28,7 +28,7 @@ struct WeeklySumView: View {
                                 Text("Total energy burned")
                                     .font(.caption)
                                     .foregroundStyle(.gray)
-                                Text("\(viewModel.formattedCalories(viewModel.calories)) kcal")
+                                Text("\(activityVM.formattedCalories(activityVM.calories)) kcal")
                                 .font(.body)
                                 .bold()
                             }
@@ -36,7 +36,7 @@ struct WeeklySumView: View {
                                 Text("Exercise time total")
                                     .font(.caption)
                                     .foregroundStyle(.gray)
-                                Text("\(Int(viewModel.exerciseTime * 60)) minutes")
+                                Text("\(Int(activityVM.exerciseTime * 60)) minutes")
                                 .font(.body)
                                 .bold()
                             }
@@ -46,7 +46,7 @@ struct WeeklySumView: View {
                                 Text("Total standing time")
                                     .font(.caption)
                                     .foregroundStyle(.gray)
-                                Text("\(Int(viewModel.standingTime * 60)) minutes")
+                                Text("\(Int(activityVM.standingTime * 60)) minutes")
 
                                 .font(.body)
                                 .bold()
@@ -65,7 +65,7 @@ struct WeeklySumView: View {
                     .padding()
                     .onAppear {
                         Task {
-                            await viewModel.fetchData()
+                            await activityVM.fetchData()
                         }
                     }
                     .background(Color.white)

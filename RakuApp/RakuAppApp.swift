@@ -15,6 +15,8 @@ struct RakuAppApp: App {
     @StateObject private var userVM = UserViewModel()
     @StateObject private var matchVM = MatchViewModel()
     @StateObject private var GameVM = GameViewModel(userViewModel: UserViewModel())
+    @StateObject private var activityVM: ActivityViewModel
+
     
     init(){
         FirebaseApp.configure()
@@ -23,7 +25,8 @@ struct RakuAppApp: App {
         let providerFactory = AppCheckDebugProviderFactory()
         AppCheck.setAppCheckProviderFactory(providerFactory)
     #endif
-        
+        let activityVM = ActivityViewModel(authViewModel: authVM)
+        _activityVM = StateObject(wrappedValue: activityVM)
     }
     
     var body: some Scene {
@@ -33,6 +36,7 @@ struct RakuAppApp: App {
                 .environmentObject(userVM)
                 .environmentObject(matchVM)
                 .environmentObject(GameVM)
+//                .environmentObject(ActivityVM)
         }
     }
 }

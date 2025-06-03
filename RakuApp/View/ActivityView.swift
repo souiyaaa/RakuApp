@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct ActivityView: View {
-    @StateObject var viewModel = ActivityViewModel()
+    @EnvironmentObject var activityVM: ActivityViewModel
+    @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var matchVM: MatchViewModel
+
 
     var body: some View {
         NavigationStack {
@@ -25,18 +28,27 @@ struct ActivityView: View {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
                                     HStack(spacing: 8) {
-                                        Image(systemName: "tennis.racket")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(height: height * 0.34)  // ±22
-                                            .foregroundColor(.yellow)
+                                        if let uiImage = authVM.userViewModel.myUserPicture {
+                                               Image(uiImage: uiImage)
+                                                   .resizable()
+                                                   .scaledToFill()
+                                                   .frame(width: 50, height: 50)
+                                                   .clipShape(Circle())
+                                           } else {
+                                               Image(systemName: "person.crop.circle.fill") // fallback system image
+                                                   .resizable()
+                                                   .frame(width: 50, height: 50)
+                                                   .foregroundColor(.gray)
+                                           }
 
-                                        Text("Kezia Allen")
+                                        Text(
+                                            "\(authVM.userViewModel.myUserData.name.isEmpty ? "User" : authVM.userViewModel.myUserData.name) you are at"
+                                        )
                                             .font(.body)
                                             .bold()
                                     }
 
-                                    Text("Surabaya, Indonesia")
+                                    Text(matchVM.userLocationDescription)
                                         .font(.caption)
                                         .foregroundColor(.gray)
                                 }
@@ -51,12 +63,19 @@ struct ActivityView: View {
                                         blue: 237 / 255
                                     )
                                     .cornerRadius(20)
-
-                                    Image(systemName: "arrow.clockwise")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: height * 0.28)
-                                        .foregroundColor(.black)
+                                    
+                                    Button(action: {
+                                        matchVM.refreshLocation()
+                                    }) {
+                                        HStack {
+                                            Image(systemName: "arrow.clockwise")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(height: height * 0.28)
+                                                .foregroundColor(.black)
+                                        }
+                                    }
+                                   
                                 }
                                 .frame(
                                     width: totalWidth * 0.09,
@@ -71,7 +90,7 @@ struct ActivityView: View {
                     .frame(height: 64)
                     .padding(.horizontal)
                     .padding(.top, 20)
-                    WeeklySumView(viewModel: viewModel)
+                    WeeklySumView(activityVM: _activityVM)
                     Text("Leaderboard")
                         .font(.headline)
                         .padding(.horizontal)
@@ -90,8 +109,4 @@ struct ActivityView: View {
             .toolbarBackground(.visible, for: .navigationBar)
         }
     }
-}
-
-#Preview {
-    ActivityView()
 }
