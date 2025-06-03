@@ -47,4 +47,44 @@ class HealthKitManager {
             healthStore.execute(query)
         }
     }
+    
+    func fetchTodayExerciseTime()async -> Double{
+        let excTime = HKObjectType.quantityType(forIdentifier: .appleExerciseTime)!
+        let now = Date()
+        let startOfDay = Calendar.current.startOfDay(for: now)
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay,end:now,options:.strictStartDate)
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(quantityType: excTime, quantitySamplePredicate: predicate, options: .cumulativeSum){
+                _,result,_ in
+                guard let result = result, let sum = result.sumQuantity() else{
+                    continuation.resume(returning: 0.0)
+                    return
+                }
+                let time = sum.doubleValue(for: HKUnit.hour()) * 60
+                
+                continuation.resume(returning: time)
+            }
+            healthStore.execute(query)
+        }
+    }
+    
+    func fetchStandingTime()async -> Double{
+        let standingTime = HKObjectType.quantityType(forIdentifier: .appleStandTime)!
+        let now = Date()
+        let startOfDay = Calendar.current.startOfDay(for: now)
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay,end:now,options:.strictStartDate)
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(quantityType: standingTime, quantitySamplePredicate: predicate, options: .cumulativeSum){
+                _,result,_ in
+                guard let result = result, let sum = result.sumQuantity() else{
+                    continuation.resume(returning: 0.0)
+                    return
+                }
+                let standtime = sum.doubleValue(for: HKUnit.hour()) * 60
+                
+                continuation.resume(returning: standtime)
+            }
+            healthStore.execute(query)
+        }
+    }
 }
