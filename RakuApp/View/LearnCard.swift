@@ -1,3 +1,10 @@
+//
+//  LearnCard.swift
+//  RakuApp
+//
+//  Created by student on 22/05/25.
+//
+
 import SwiftUI
 
 struct LearnCard: View {
@@ -37,7 +44,7 @@ struct LearnCard: View {
                 .font(.subheadline)
                 .lineLimit(1)
 
-            Text(publisher)
+            Text(publisher.count > 10 ? String(publisher.prefix(10)) + "..." : publisher)
                 .font(.caption)
                 .foregroundColor(Color(red: 140/255, green: 133/255, blue: 133/255))
         }

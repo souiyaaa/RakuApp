@@ -11,11 +11,9 @@ import Firebase
 
 @main
 struct RakuAppApp: App {
-    @StateObject private var authVM = AuthViewModel(userViewModel: UserViewModel())
-    @StateObject private var userVM = UserViewModel()
-    @StateObject private var matchVM = MatchViewModel()
-    @StateObject private var GameVM = GameViewModel(userViewModel: UserViewModel())
-    
+    @StateObject private var authVM = AuthViewModel()
+    @StateObject var activityVM = ActivityViewModel()
+
     init(){
         FirebaseApp.configure()
         
@@ -30,9 +28,7 @@ struct RakuAppApp: App {
         WindowGroup {
             MainView()
                 .environmentObject(authVM)
-                .environmentObject(userVM)
-                .environmentObject(matchVM)
-                .environmentObject(GameVM)
+                .environmentObject(activityVM)
         }
     }
 }
