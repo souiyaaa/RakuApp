@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Allow Location for Raku please</string>
 	<key>CLIENT_ID</key>
 	<string>124720283370-ti5c11s938hf4f2oh00u6n20v9inb210.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
@@ -32,5 +34,7 @@
 	<string>1:124720283370:ios:b53b1b93312240268b6193</string>
 	<key>DATABASE_URL</key>
 	<string>https://rakuapp-5e2b2-default-rtdb.firebaseio.com</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Allow location please </string>
 </dict>
 </plist>

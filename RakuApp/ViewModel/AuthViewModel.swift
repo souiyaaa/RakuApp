@@ -6,111 +6,57 @@
 //
 
 import FirebaseAuth
+import FirebaseDatabase
 import Foundation
 import GoogleSignIn
-import FirebaseDatabase
-
-
 
 @MainActor
 class AuthViewModel: ObservableObject {
     @Published var user: User?
     @Published var isSignedIn: Bool
-    @Published var myUser: MyUser
-
     @Published var falseCredential: Bool
 
-    init() {
+    let userViewModel: UserViewModel
+
+    init(userViewModel: UserViewModel) {
+        self.userViewModel = userViewModel
         self.user = nil
         self.isSignedIn = false
         self.falseCredential = false
-        self.myUser = MyUser()
         self.checkUserSession()
+        self.userViewModel.checkUserPhoto() 
     }
-
-    
-    func fetchUserName() -> String{
-        
-        if let user = Auth.auth().currentUser {
-            let uid = user.uid               // Firebase UID
-            let email = user.email           // User's email
-            let displayName = user.displayName // User's display name (if set)
-
-            print("UID: \(uid)")
-            print("Email: \(email ?? "No email")")
-            print("Display Name: \(displayName ?? "No name")")
-            
-            return displayName ?? "No name"
-        } else {
-            print("No user is currently signed in.")
-            return ""
-        }
-    }
-
-    func fetchUserData() {
-        guard let uid = Auth.auth().currentUser?.uid else {
-            print(" No logged in user.")
-            return
-        }
-
-        let ref = Database.database().reference()
-        ref.child("users").child(uid).observeSingleEvent(of: .value) { snapshot in
-            print(snapshot)
-            guard let value = snapshot.value as? [String: Any] else {
-                print(" Failed to cast user data")
-                return
-            }
-            
-         
-
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: value)
-                let user = try JSONDecoder().decode(MyUser.self, from: jsonData)
-                DispatchQueue.main.async {
-                    self.myUser = user
-                    print("User data fetched: \(self.myUser)")
-                }
-            } catch {
-                print(" Decoding error: \(error.localizedDescription)")
-            }
-        }
-    }
-
 
     func checkUserSession() {
         self.user = Auth.auth().currentUser
-        self.isSignedIn = self.user != nil
-        
-        print("sign in 3")
-        print(isSignedIn)
-        if isSignedIn {
-            fetchUserData()
+        DispatchQueue.main.async {
+            self.isSignedIn = self.user != nil
+            if self.isSignedIn {
+                print("sign in berhasil")
+                self.userViewModel.fetchUserData()
+            }
         }
-        
-        
     }
+    
+  
 
     func signOut() {
         do {
             try Auth.auth().signOut()
             isSignedIn = false
-
         } catch {
             print("Sign out Error: \(error.localizedDescription)")
         }
     }
 
-    func signIn() async {
-        print("sign in")
+    func signIn(email: String, password: String) async {
         do {
             _ = try await Auth.auth().signIn(
-                withEmail: myUser.email, password: myUser.password)
+                withEmail: email, password: password)
             DispatchQueue.main.async {
                 self.falseCredential = false
-                print("sign in 2")
                 self.checkUserSession()
             }
-            
         } catch {
             DispatchQueue.main.async {
                 self.falseCredential = true
@@ -118,19 +64,30 @@ class AuthViewModel: ObservableObject {
         }
     }
 
-    func signUp() async {
+    func signUp(email: String, password: String, name: String, experience: String) async {
         do {
-            let _ = try await Auth.auth().createUser(
-                withEmail: myUser.email, password: myUser.password)
+            let authResult = try await Auth.auth().createUser(
+                withEmail: email, password: password)
+            let uid = authResult.user.uid
+
+            // Prepare user data in UserViewModel
+            var newUser = userViewModel.myUserData
+            newUser.id = uid
+            newUser.email = email
+            newUser.name = name
+            newUser.experience = experience
+
+            // Save user data via UserViewModel
+            userViewModel.saveUserData(
+                user: MyUser(name: name, experience: experience))
+
             self.falseCredential = false
             self.checkUserSession()
         } catch {
-            print("sign up Error: \(error.localizedDescription) ")
+            print("Sign up Error: \(error.localizedDescription)")
         }
     }
 
-    //google signin here
-
-    //google signout here
-
+    //google signin disini
+    //google
 }

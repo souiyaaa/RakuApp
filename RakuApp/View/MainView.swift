@@ -7,6 +7,7 @@
 
 import SwiftUI
 struct MainView: View {
+    
     @EnvironmentObject var authVM: AuthViewModel
 
     var body: some View {
@@ -42,6 +43,9 @@ struct MainView: View {
 
 
 #Preview {
-    MainView()
-        .environmentObject(AuthViewModel())
+    let userVM = UserViewModel()
+    let authVM = AuthViewModel(userViewModel: userVM)
+    
+    return MainView()
+        .environmentObject(authVM)
 }
