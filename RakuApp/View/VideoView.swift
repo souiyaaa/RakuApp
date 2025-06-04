@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct LearnView: View {
+struct VideoView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -171,5 +171,5 @@ struct SectionView: View {
     }
 }
 #Preview {
-    LearnView()
+    VideoView()
 }

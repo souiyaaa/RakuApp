@@ -23,7 +23,7 @@ struct MainView: View {
                                 Text("Matches")
                             }
 
-                        LearnView()
+                        VideoView()
                             .tabItem {
                                 Image(systemName: "book.pages.fill")
                                 Text("Learn")
