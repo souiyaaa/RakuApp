@@ -311,6 +311,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = NSLocationWhenInUseUsageDescription;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your health data to track your fitness during badminton.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We use your health data to improve your badminton training experience";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Location for Raku is needed";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allow us please";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -344,6 +346,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = NSLocationWhenInUseUsageDescription;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your health data to track your fitness during badminton.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We use your health data to improve your badminton training experience";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Location for Raku is needed";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allow us please";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
