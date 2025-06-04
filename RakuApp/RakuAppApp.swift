@@ -5,47 +5,37 @@
 //  Created by Surya on 21/05/25.
 //
 
-import Firebase
-import FirebaseAppCheck
 import SwiftUI
+import FirebaseAppCheck
+import Firebase
 
 @main
 struct RakuAppApp: App {
+    @StateObject private var authVM = AuthViewModel(userViewModel: UserViewModel())
     @StateObject private var userVM = UserViewModel()
-    @StateObject private var authVM: AuthViewModel
-    @StateObject private var gameVM: GameViewModel
     @StateObject private var matchVM = MatchViewModel()
-    @StateObject private var activityVM: ActivityViewModel
-
-    init() {
+    @StateObject private var GameVM = GameViewModel(userViewModel: UserViewModel())
+    @StateObject private var gripVM = GripViewModel()
+    @StateObject private var activityVM = ActivityViewModel(userViewModel: UserViewModel())
+    
+    init(){
         FirebaseApp.configure()
-
-        #if DEBUG
-            let providerFactory = AppCheckDebugProviderFactory()
-            AppCheck.setAppCheckProviderFactory(providerFactory)
-        #endif
-
-        let userVM = UserViewModel()
-        _userVM = StateObject(wrappedValue: userVM)
-
-        let authVM = AuthViewModel(userViewModel: userVM)
-        _authVM = StateObject(wrappedValue: authVM)
-
-        _gameVM = StateObject(
-            wrappedValue: GameViewModel(userViewModel: userVM)
-        )
-        _activityVM = StateObject(
-            wrappedValue: ActivityViewModel(authViewModel: authVM)
-        )
+        
+    #if DEBUG
+        let providerFactory = AppCheckDebugProviderFactory()
+        AppCheck.setAppCheckProviderFactory(providerFactory)
+    #endif
+        
     }
-
+    
     var body: some Scene {
         WindowGroup {
             MainView()
                 .environmentObject(authVM)
                 .environmentObject(userVM)
                 .environmentObject(matchVM)
-                .environmentObject(gameVM)
+                .environmentObject(GameVM)
+                .environmentObject(gripVM)
                 .environmentObject(activityVM)
         }
     }
