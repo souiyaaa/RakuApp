@@ -35,22 +35,9 @@
 		D8E2859E2DDE0FBB0038DA9A /* RakuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RakuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		3FD17EDF2DEEEA4D00C9BD69 /* Exceptions for "RakuApp" folder in "RakuApp" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = D8E2859D2DDE0FBB0038DA9A /* RakuApp */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D8E285A02DDE0FBB0038DA9A /* RakuApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				3FD17EDF2DEEEA4D00C9BD69 /* Exceptions for "RakuApp" folder in "RakuApp" target */,
-			);
 			path = RakuApp;
 			sourceTree = "<group>";
 		};
