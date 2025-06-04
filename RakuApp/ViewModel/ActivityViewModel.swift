@@ -30,17 +30,20 @@ class ActivityViewModel: ObservableObject {
         self.calories = await healthKitManager.fetchTodayCalories()
         self.standingTime = await healthKitManager.fetchStandingTime()
         self.exerciseTime = await healthKitManager.fetchTodayExerciseTime()
-        self.userName = authViewModel.userViewModel.myUserData.name
-        self.userExperience = authViewModel.userViewModel.myUserData.experience
+//        self.userName = authViewModel.userViewModel.myUserData.name
+//        self.userExperience = authViewModel.userViewModel.myUserData.experience
     }
 
 
+    //reformat the decimals
     func formattedCalories(_ calories: Double) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 1
         return formatter.string(from: NSNumber(value: calories)) ?? "\(calories)"
     }
+    
+    
     func requestHealthAuthorizationIfNeeded() async {
         guard authViewModel.isSignedIn else {
             print("User not signed in; skipping HealthKit auth.")

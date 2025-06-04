@@ -12,6 +12,7 @@ struct MapModel: Identifiable, Hashable {
     let id = UUID()
     let mapItem: MKMapItem
 
+    
     var coordinate: CLLocationCoordinate2D {
         mapItem.placemark.coordinate
     }
@@ -25,7 +26,8 @@ struct MapModel: Identifiable, Hashable {
         mapItem.placemark.title ?? "No address available"
     }
 
-    // Supaya bisa dipakai di ForEach dengan id: \.self, conform ke Hashable
+    
+    //mendetect hasil dari search di MapView supaya bisa disimpan
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
@@ -33,5 +35,6 @@ struct MapModel: Identifiable, Hashable {
     static func == (lhs: MapModel, rhs: MapModel) -> Bool {
         lhs.id == rhs.id
     }
+    
 }
 

@@ -19,6 +19,7 @@ struct MapCard: View {
             Map(
                 coordinateRegion: $viewModel.region,
                 showsUserLocation: true,
+//                nunjukin titik koordinat yang dicari (map marker)
                 annotationItems: viewModel.selectedLocation.map { [$0] } ?? []
             ) { annotation in
                 MapMarker(coordinate: annotation.coordinate, tint: .red)

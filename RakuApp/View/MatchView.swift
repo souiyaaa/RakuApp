@@ -30,6 +30,9 @@ struct MatchView: View {
                                .foregroundColor(.gray)
                        }
                     
+                    
+
+                    
                     VStack(alignment: .leading) {
                         HStack {
                             Text(
@@ -85,39 +88,8 @@ struct MatchView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
                 .padding(.bottom, 4)
-
-                HStack {
-                    Button(action: {
-                        // action here
-                    }) {
-                        Text("Aug >")
-                            .foregroundColor(Color(hex: "253366"))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.white)
-                            .cornerRadius(12)  // rounded corners
-                            .shadow(
-                                color: Color.black.opacity(0.1), radius: 4,
-                                x: 0, y: 2)  // gentle shadow
-                    }
-
-                    Spacer()
-
-                    Button(action: {
-                        isAddEvent = true
-                    }) {
-                        Text("Add Events")
-                            .foregroundColor(Color(hex: "253366"))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.white)
-                            .cornerRadius(12)  // rounded corners
-                            .shadow(
-                                color: Color.black.opacity(0.1), radius: 4,
-                                x: 0, y: 2)  // gentle shadow
-                    }
-                }
-                .padding(.horizontal, 16)
+                
+                CalendarView()
 
                 Spacer()
             }

@@ -12,12 +12,14 @@ class HealthKitManager {
 
     func requestAuthorization() async throws -> Bool{
 
+        //ngeread data dari healthkit (data dari milik user)
         let readTypes: Set<HKObjectType> = [
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
             HKObjectType.quantityType(forIdentifier: .appleExerciseTime)!,
             HKObjectType.quantityType(forIdentifier: .appleStandTime)!
         ]
     
+        //error handling untuk request autorisasi healthstore
         return try await withCheckedThrowingContinuation { continuation in
             healthStore.requestAuthorization(toShare: nil, read: readTypes) { success, error in
                 if let error = error {
@@ -28,6 +30,8 @@ class HealthKitManager {
             }
         }
     }
+    
+    //data calorie
     func fetchTodayCalories()async -> Double{
         let calorieType = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!
         let now = Date()

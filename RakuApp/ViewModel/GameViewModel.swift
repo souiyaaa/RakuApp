@@ -102,11 +102,13 @@ class GameViewModel: ObservableObject {
                 as? [String: Any]
         else {
             print("function failed to add match")
+           
             return false
            
         }
 
         ref.child(newMatch.id).setValue(json)
+        print(newMatch)
         print("function is done ")
         return true
        

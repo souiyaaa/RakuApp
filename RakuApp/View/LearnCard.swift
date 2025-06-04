@@ -31,7 +31,7 @@ struct LearnCard: View {
                     .clipped()
                     .cornerRadius(8)
                 }
-                .buttonStyle(PlainButtonStyle()) // hilangkan animasi klik default dari button
+                .buttonStyle(PlainButtonStyle())
 
                 Image(systemName: "play.rectangle.fill")
                     .resizable()
