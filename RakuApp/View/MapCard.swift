@@ -3,6 +3,15 @@ import MapKit
 
 struct MapCard: View {
     @StateObject private var viewModel = MapViewModel()
+    @EnvironmentObject var gameViewModel: GameViewModel
+    
+    @Binding var isAddEvent: Bool
+    @Binding var isChooseFriend: Bool
+    @Binding var name: String
+    @Binding var description: String
+    @Binding var date: Date
+    @Binding var courtCost: Double
+    @Binding var arrayUser: [MyUser]
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -102,9 +111,15 @@ struct MapCard: View {
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                         }
+                        
+                        
 
                         Button(action: {
                             // Action when user confirms location
+                            gameViewModel.addMatch(name: name, description: description, date: date, courtCost: courtCost, players: arrayUser, location: viewModel.locationString)
+                            print("button pressed")
+                            print(viewModel.locationString)
+                            
                         }) {
                             Text("Choose Location")
                                 .frame(maxWidth: .infinity)
@@ -124,6 +139,9 @@ struct MapCard: View {
                 .zIndex(3)
             }
         }
+        .onAppear {
+            print(name, description, date, courtCost)
+        }
         .navigationTitle("Add Location")
         .navigationBarTitleDisplayMode(.inline)
         .animation(.easeInOut, value: viewModel.selectedLocation)
@@ -131,5 +149,10 @@ struct MapCard: View {
 }
 
 #Preview {
-    MapCard()
+    let userVM = UserViewModel()
+    let authVM = AuthViewModel(userViewModel: userVM)
+    let gameVM = GameViewModel(userViewModel: userVM)
+    
+    MapCard(isAddEvent: .constant(true), isChooseFriend: .constant(true), name:.constant("Sample Event"), description: .constant("Sample Description"), date: .constant(Date()), courtCost: .constant(1000), arrayUser: .constant([]))
+        .environmentObject(gameVM)
 }
