@@ -84,7 +84,7 @@ class GameViewModel: ObservableObject {
 
     func addMatch(
         name: String, description: String, date: Date, courtCost: Double,
-        players: [MyUser]
+        players: [MyUser], location: String
     ) -> Bool {
         let newMatch = Match(
             name: name,
@@ -94,18 +94,22 @@ class GameViewModel: ObservableObject {
             players: players,
             games: [],
             paidUserIds: [],
-            location: ""
+            location: location
         )
 
         guard let jsonData = try? JSONEncoder().encode(newMatch),
             let json = try? JSONSerialization.jsonObject(with: jsonData)
                 as? [String: Any]
         else {
+            print("function failed to add match")
             return false
+           
         }
 
         ref.child(newMatch.id).setValue(json)
+        print("function is done ")
         return true
+       
     }
 
     func addGame(to matchId: String, game: Game) {

@@ -6,7 +6,8 @@ import CoreLocation
 class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     private let locationManager = CLLocationManager()
-
+    @Published var locationString: String = ""
+  
     @Published var searchText = ""
     @Published var searchResults: [MapModel] = []
     @Published var selectedLocation: MapModel?
@@ -35,9 +36,13 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
              center: item.coordinate,
              span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
          )
-
+        
+        locationString = "\(item.name), \(item.address)"
+           print("Selected location string: \(locationString)")
+        
          UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
      }
+    
     func searchForLocation() {
             let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else {

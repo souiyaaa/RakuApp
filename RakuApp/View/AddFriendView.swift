@@ -53,8 +53,8 @@ struct AddFriendView: View {
             )
             Button(
                 action: {
-                    gameViewModel.addMatch(name: name, description: description, date: date, courtCost: courtCost, players: arrayUser)
-                    arrayUser.removeAll()
+//                    gameViewModel.addMatch(name: name, description: description, date: date, courtCost: courtCost, players: arrayUser)
+//                    arrayUser.removeAll()
                     submitUser = true
                     }
             ) {
@@ -69,13 +69,17 @@ struct AddFriendView: View {
             .padding(.top, 12)
             Spacer()
         }
+        //so that it always clear at beginneing
+        .onAppear {
+            arrayUser.removeAll()
+        }
         .padding(.horizontal, 12)
         .background(Color(hex: "F7F7F7"))
         .navigationTitle("Add Friend")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $submitUser) {
             NavigationStack {
-                MapCard()
+                MapCard(isAddEvent: $isAddEvent, isChooseFriend: $isChooseFriend, name: $name, description: $description, date: $date, courtCost: $courtCost, arrayUser:$arrayUser)
             }
         }
     }
