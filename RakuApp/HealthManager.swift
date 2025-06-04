@@ -60,8 +60,8 @@ class HealthKitManager {
                     continuation.resume(returning: 0.0)
                     return
                 }
-                let time = sum.doubleValue(for: HKUnit.hour()) * 60
-                
+                let time = sum.doubleValue(for: HKUnit.minute())
+
                 continuation.resume(returning: time)
             }
             healthStore.execute(query)
@@ -80,8 +80,8 @@ class HealthKitManager {
                     continuation.resume(returning: 0.0)
                     return
                 }
-                let standtime = sum.doubleValue(for: HKUnit.hour()) * 60
-                
+                let standtime = sum.doubleValue(for: HKUnit.minute())
+
                 continuation.resume(returning: standtime)
             }
             healthStore.execute(query)

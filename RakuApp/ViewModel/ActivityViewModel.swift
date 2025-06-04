@@ -16,17 +16,25 @@ class ActivityViewModel: ObservableObject {
     @Published var calories: Double = 0.0
     @Published var standingTime: Double = 0.0
     @Published var exerciseTime: Double = 0.0
-    
+    @Published var userName: String = ""
+    @Published var userExperience: String = ""
+
+
     init(authViewModel: AuthViewModel) {
         self.authViewModel = authViewModel
     }
 
     func fetchData() async {
+        guard authViewModel.isSignedIn else { return }
+
         self.calories = await healthKitManager.fetchTodayCalories()
         self.standingTime = await healthKitManager.fetchStandingTime()
         self.exerciseTime = await healthKitManager.fetchTodayExerciseTime()
-
+        self.userName = authViewModel.userViewModel.myUserData.name
+        self.userExperience = authViewModel.userViewModel.myUserData.experience
     }
+
+
     func formattedCalories(_ calories: Double) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
