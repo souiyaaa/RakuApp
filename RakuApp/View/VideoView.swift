@@ -8,43 +8,46 @@ struct VideoView: View {
                     GeometryReader { geo in
                         let cardHeight: CGFloat = geo.size.width * 0.38
 
-                        ZStack(alignment: .leading) {
-                            Image("RUMPUT")
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(height: 120)
-                                .cornerRadius(20)
-                                .clipped()
-
-                            HStack {
-                                Spacer()
-                                Image("COCK")
+                        NavigationLink(destination: LearnView()) {
+                            ZStack(alignment: .leading) {
+                                Image("RUMPUT")
                                     .resizable()
-                                    .scaledToFit()
-                                    .frame(height:90)
-                                    .padding(.bottom, 9)
-                                    .padding(.trailing, 1)
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(height: 120)
+                                    .cornerRadius(20)
+                                    .clipped()
+
+                                HStack {
+                                    Spacer()
+                                    Image("COCK")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: 90)
+                                        .padding(.bottom, 9)
+                                        .padding(.trailing, 1)
+                                }
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Check Now!")
+                                        .foregroundColor(.white)
+                                        .font(.headline)
+
+                                    Text("Grip Test")
+                                        .foregroundColor(.white)
+                                        .font(.title2)
+                                        .bold()
+
+                                    Text("Get the opportunity to check your")
+                                        .font(.caption)
+                                        .foregroundColor(.white)
+                                    Text("posture now")
+                                        .font(.caption)
+                                        .foregroundColor(.white)
+                                }
+                                .padding()
                             }
-
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Check Now!")
-                                    .foregroundColor(.white)
-                                    .font(.headline)
-
-                                Text("Grip Test")
-                                    .foregroundColor(.white)
-                                    .font(.title2)
-                                    .bold()
-
-                                Text("Get the opportunity to check your")
-                                    .font(.caption)
-                                    .foregroundColor(.white)
-                                Text("posture now")
-                                    .font(.caption)
-                                    .foregroundColor(.white)
-                            }
-                            .padding()
                         }
+                        .buttonStyle(PlainButtonStyle())
                         .frame(height: cardHeight)
                     }
                     .frame(height: 160)
