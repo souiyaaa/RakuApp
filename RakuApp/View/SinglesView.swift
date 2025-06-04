@@ -12,58 +12,70 @@ struct SinglesView: View {
     @State private var gameUpTo = 21
     @State private var maxScore = 30
 
+    @State private var startMatch = false // ✅ 상태 변수 추가
+
     var body: some View {
-        VStack(spacing: 20) {
-            // 🏸 코트: 2개는 빈 박스, 2개는 선수
-            VStack(spacing: 10) {
-                HStack(spacing: 20) {
-                    EmptyCourtBox()
-                    SinglePlayerView(name: "Player 1")
+        NavigationStack {
+            VStack(spacing: 20) {
+                // 🏸 코트: 2개는 빈 박스, 2개는 선수
+                VStack(spacing: 10) {
+                    HStack(spacing: 20) {
+                        EmptyCourtBox()
+                        SinglePlayerView(name: "Player 1")
+                    }
+                    HStack(spacing: 20) {
+                        SinglePlayerView(name: "Player 2")
+                        EmptyCourtBox()
+                    }
                 }
-                HStack(spacing: 20) {
-                    SinglePlayerView(name: "Player 2")
-                    EmptyCourtBox()
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(12)
+
+                // 참가자 명단
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Participants")
+                        .font(.headline)
+                    HStack(spacing: 20) {
+                        SingleTeamBox(title: "Team 1", color: Color.blue.opacity(0.1))
+                        SingleTeamBox(title: "Team 2", color: Color.red.opacity(0.1))
+                    }
+                }
+                .padding(.horizontal)
+
+                // 설정
+                VStack(spacing: 10) {
+                    SingleSettingRow(title: "Best of", value: $bestOf)
+                    SingleSettingRow(title: "Game up to", value: $gameUpTo, highlighted: true)
+                    SingleSettingRow(title: "Max Score", value: $maxScore)
+                }
+                .padding(.horizontal)
+
+                // 랜덤 버튼
+                Button("Random Match Detail") {}
+                    .foregroundColor(.blue)
+
+                // 👉 Start Match 버튼
+                Button(action: {
+                    startMatch = true
+                }) {
+                    Text("Start Match")
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(12)
+                }
+                .padding(.horizontal)
+
+                // 👉 NavigationLink로 ScoreboardView로 이동
+                NavigationLink(destination: ScoreboardView(), isActive: $startMatch) {
+                    EmptyView()
                 }
             }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.gray.opacity(0.2))
-            .cornerRadius(12)
-
-            // 참가자 명단 (1:1 싱글용)
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Participants")
-                    .font(.headline)
-                HStack(spacing: 20) {
-                    SingleTeamBox(title: "Team 1", color: Color.blue.opacity(0.1))
-                    SingleTeamBox(title: "Team 2", color: Color.red.opacity(0.1))
-                }
-            }
-            .padding(.horizontal)
-
-            // 설정
-            VStack(spacing: 10) {
-                SingleSettingRow(title: "Best of", value: $bestOf)
-                SingleSettingRow(title: "Game up to", value: $gameUpTo, highlighted: true)
-                SingleSettingRow(title: "Max Score", value: $maxScore)
-            }
-            .padding(.horizontal)
-
-            // 버튼
-            Button("Random Match Detail") {}
-                .foregroundColor(.blue)
-
-            Button(action: {}) {
-                Text("Start Match")
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(12)
-            }
-            .padding(.horizontal)
+            .padding(.vertical)
         }
-        .padding(.vertical)
     }
 }
 
@@ -157,4 +169,5 @@ struct SingleSettingRow: View {
 #Preview {
     SinglesView()
 }
+
 

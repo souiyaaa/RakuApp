@@ -50,6 +50,47 @@ struct MatchView: View {
                     }
                     .padding()
                     CalendarView()
+                
+                    HStack {
+                        Spacer()
+                        NavigationLink(destination: MatchDetailView()) {
+                            VStack(spacing: 4) {
+                                Text("YOU ARE")
+                                    .font(.title)
+                                    .fontWeight(.heavy)
+                                    .foregroundColor(Color(red: 0.0, green: 0.2, blue: 0.5))
+                                Text("INVITED")
+                                    .font(.title2)
+                                    .italic()
+                                    .foregroundColor(.blue)
+                            }
+                            .padding(.vertical, 20)
+                            .padding(.horizontal, 32)
+                            .background(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        .red.opacity(0.2),
+                                        .orange.opacity(0.2),
+                                        .yellow.opacity(0.2),
+                                        .green.opacity(0.2),
+                                        .blue.opacity(0.2),
+                                        .purple.opacity(0.2)
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .cornerRadius(24)
+                            .shadow(radius: 4)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        Spacer()
+                    }
+                    .padding(.top, 0) // ⬅️ 위로 올림 (기존 4 → 0)
+
+
+
+                    .ignoresSafeArea(edges: .horizontal)
 
                 }
                 

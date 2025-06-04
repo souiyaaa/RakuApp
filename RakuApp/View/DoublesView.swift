@@ -8,6 +8,11 @@
 import SwiftUI
 
 struct DoublesView: View {
+    @State private var bestOf = 3
+    @State private var gameUpTo = 21
+    @State private var maxScore = 30
+
+    @State private var startMatch = false
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
@@ -31,6 +36,14 @@ struct DoublesView: View {
                         TeamBox(title1: "Team 1 left", title2: "Team 1 Right", color: Color.blue.opacity(0.1))
                         TeamBox(title1: "Team 2 left", title2: "Team 2 Right", color: Color.red.opacity(0.1))
                     }
+                }
+                .padding(.horizontal)
+                
+                // 설정
+                VStack(spacing: 10) {
+                    SingleSettingRow(title: "Best of", value: $bestOf)
+                    SingleSettingRow(title: "Game up to", value: $gameUpTo, highlighted: true)
+                    SingleSettingRow(title: "Max Score", value: $maxScore)
                 }
                 .padding(.horizontal)
 
