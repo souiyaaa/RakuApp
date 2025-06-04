@@ -9,6 +9,7 @@ import SwiftUI
 struct MainView: View {
     
     @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var activityVM: ActivityViewModel
 
     var body: some View {
         Group {
@@ -45,7 +46,9 @@ struct MainView: View {
 #Preview {
     let userVM = UserViewModel()
     let authVM = AuthViewModel(userViewModel: userVM)
+    let activityVM = ActivityViewModel(userViewModel: userVM)
     
-    return MainView()
+    MainView()
         .environmentObject(authVM)
+        .environmentObject(activityVM)
 }
