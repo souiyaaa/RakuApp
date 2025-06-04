@@ -73,6 +73,11 @@ struct AddFriendView: View {
         .background(Color(hex: "F7F7F7"))
         .navigationTitle("Add Friend")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $submitUser) {
+            NavigationStack {
+                MapCard()
+            }
+        }
     }
 }
 #Preview {

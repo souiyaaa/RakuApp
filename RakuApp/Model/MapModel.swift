@@ -8,7 +8,7 @@
 import Foundation
 import MapKit
 
-struct MapModel: Identifiable {
+struct MapModel: Identifiable, Hashable {
     let id = UUID()
     let mapItem: MKMapItem
 
@@ -19,4 +19,19 @@ struct MapModel: Identifiable {
     var name: String {
         mapItem.name ?? "Unknown Location"
     }
+
+    var address: String {
+        // Bisa gunakan placemark.title atau buat formatted address
+        mapItem.placemark.title ?? "No address available"
+    }
+
+    // Supaya bisa dipakai di ForEach dengan id: \.self, conform ke Hashable
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    static func == (lhs: MapModel, rhs: MapModel) -> Bool {
+        lhs.id == rhs.id
+    }
 }
+
