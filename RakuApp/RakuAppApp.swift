@@ -15,6 +15,8 @@ struct RakuAppApp: App {
     @StateObject private var userVM = UserViewModel()
     @StateObject private var matchVM = MatchViewModel()
     @StateObject private var GameVM = GameViewModel(userViewModel: UserViewModel())
+    @StateObject private var gripVM = GripViewModel()
+    @StateObject private var activityVM = ActivityViewModel(userViewModel: UserViewModel())
     
     init(){
         FirebaseApp.configure()
@@ -33,6 +35,8 @@ struct RakuAppApp: App {
                 .environmentObject(userVM)
                 .environmentObject(matchVM)
                 .environmentObject(GameVM)
+                .environmentObject(gripVM)
+                .environmentObject(activityVM)
         }
     }
 }

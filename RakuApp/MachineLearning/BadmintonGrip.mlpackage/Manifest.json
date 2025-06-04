@@ -1,0 +1,24 @@
+{
+    "fileFormatVersion": "1.0.0",
+    "itemInfoEntries": {
+        "2B556981-D4D5-4638-B734-1F20541EA488": {
+            "author": "com.apple.CoreML",
+            "description": "External Metadata Overlay",
+            "name": "Metadata.json",
+            "path": "com.apple.CoreML/Metadata.json"
+        },
+        "73AA228A-D141-4E08-9E5C-18F69BACD745": {
+            "author": "com.apple.CoreML",
+            "description": "External FeatureDescription Overlay",
+            "name": "FeatureDescriptions.json",
+            "path": "com.apple.CoreML/FeatureDescriptions.json"
+        },
+        "7E6AAF01-43E3-4B13-9289-D6843CE4511A": {
+            "author": "com.apple.CoreML",
+            "description": "CoreML Model Specification",
+            "name": "BadmintonGrip.mlmodel",
+            "path": "com.apple.CoreML/BadmintonGrip.mlmodel"
+        }
+    },
+    "rootModelIdentifier": "7E6AAF01-43E3-4B13-9289-D6843CE4511A"
+}

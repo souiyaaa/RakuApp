@@ -277,6 +277,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RakuApp/RakuApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RakuApp/Preview Content\"";
@@ -284,6 +285,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = NSLocationWhenInUseUsageDescription;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your health data to track your fitness during badminton.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We use your health data to improve your badminton training experience";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Location for Raku is needed";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allow us please";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -309,6 +312,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RakuApp/RakuApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RakuApp/Preview Content\"";
@@ -316,6 +320,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = NSLocationWhenInUseUsageDescription;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your health data to track your fitness during badminton.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We use your health data to improve your badminton training experience";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Location for Raku is needed";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allow us please";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
