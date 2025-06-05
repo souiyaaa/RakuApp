@@ -15,7 +15,6 @@ struct MapCard: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            // Map background
             Map(
                 coordinateRegion: $viewModel.region,
                 showsUserLocation: true,
@@ -29,9 +28,8 @@ struct MapCard: View {
                 viewModel.hideSearchResults()
             }
 
-            // Foreground overlay: Search bar + ProgressView + Results
+
             VStack(spacing: 8) {
-                // Search bar
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
@@ -96,7 +94,7 @@ struct MapCard: View {
                 Spacer()
             }
 
-            // Bottom Sheet for Selected Location
+            // Nampilin search result di bawah
             if let selected = viewModel.selectedLocation {
                 VStack(spacing: 0) {
                     Spacer()

@@ -90,8 +90,6 @@ struct CalendarView: View {
                 .padding(.horizontal)
             
             }
-
-            Spacer()
         }
         .onAppear {
             viewModel.updateDays()

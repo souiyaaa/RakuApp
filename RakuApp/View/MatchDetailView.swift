@@ -1,13 +1,11 @@
-//
-//  MatchDetailView.swift
-//  RakuApp
-//
-//  Created by student on 03/06/25.
-//
-
 import SwiftUI
 
 struct MatchDetailView: View {
+    @State private var currentTime: String = ""
+    
+    // Timer to update the current time
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -65,28 +63,28 @@ struct MatchDetailView: View {
                     }
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
+                    
                     // Actions
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("What do you want to do?")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            Text("What do you want to do?")
+                                                .font(.headline)
+                                                .foregroundColor(.primary)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
 
-                        HStack(spacing: 16) {
-                            ActionButtonView(color: .green, icon: "sportscourt", label: "Be Referee")
+                                            HStack(spacing: 16) {
+                                                ActionButtonView(color: .green, icon: "sportscourt", label: "Be Referee")
 
-                            NavigationLink(destination: SinglesView()) {
-                                ActionButtonView(color: .blue, icon: "person", label: "Singles")
-                            }
+                                                NavigationLink(destination: SinglesView()) {
+                                                    ActionButtonView(color: .blue, icon: "person", label: "Singles")
+                                                }
 
-                            NavigationLink(destination: DoublesView()) {
-                                ActionButtonView(color: .orange, icon: "person.2", label: "Doubles")
-                            }
-                        }
-                    }
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                NavigationLink(destination: DoublesView()) {
+                                                    ActionButtonView(color: .orange, icon: "person.2", label: "Doubles")
+                                                }
+                                            }
+                                        }
+                                        .padding(.horizontal)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     // Current Match
                     VStack(spacing: 8) {
@@ -97,15 +95,15 @@ struct MatchDetailView: View {
 
                         HStack {
                             VStack(alignment: .leading) {
-                                Text("Alice")
-                                Text("Bob")
+                                Text("Player 1")
+                                Text("Player 2")
                             }
                             .font(.caption)
                             .foregroundColor(.white)
 
                             Spacer()
 
-                            Text("15")
+                            Text("0")
                                 .font(.title)
                                 .bold()
                                 .foregroundColor(.white)
@@ -113,16 +111,15 @@ struct MatchDetailView: View {
                             Spacer()
 
                             VStack {
-                                Text("12:10")
-                                Text("Weston")
+                                Text(currentTime)
+                                    .font(.caption)
+                                    .multilineTextAlignment(.center)
+                                    .foregroundColor(.white)
                             }
-                            .font(.caption)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.white)
 
                             Spacer()
 
-                            Text("13")
+                            Text("0")
                                 .font(.title)
                                 .bold()
                                 .foregroundColor(.white)
@@ -130,8 +127,8 @@ struct MatchDetailView: View {
                             Spacer()
 
                             VStack(alignment: .trailing) {
-                                Text("Charlie")
-                                Text("Diana")
+                                Text("Player 3")
+                                Text("Player 4")
                             }
                             .font(.caption)
                             .foregroundColor(.white)
@@ -171,6 +168,11 @@ struct MatchDetailView: View {
             }
             .navigationTitle("Current Match")
             .navigationBarTitleDisplayMode(.inline)
+            .onReceive(timer) { _ in
+                let formatter = DateFormatter()
+                formatter.dateFormat = "HH:mm"
+                currentTime = formatter.string(from: Date())
+            }
         }
     }
 }
@@ -202,3 +204,4 @@ struct ActionButtonView: View {
 #Preview {
     MatchDetailView()
 }
+

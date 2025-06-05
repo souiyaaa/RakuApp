@@ -1,9 +1,3 @@
-//
-//  MatchView.swift
-//  RakuApp
-//
-//  Created by Surya on 22/05/25.
-//
 import SwiftUI
 
 struct MatchView: View {
@@ -18,21 +12,18 @@ struct MatchView: View {
                 // Row pertama
                 HStack {
                     if let uiImage = authVM.userViewModel.myUserPicture {
-                           Image(uiImage: uiImage)
-                               .resizable()
-                               .scaledToFill()
-                               .frame(width: 50, height: 50)
-                               .clipShape(Circle())
-                       } else {
-                           Image(systemName: "person.crop.circle.fill") // fallback system image
-                               .resizable()
-                               .frame(width: 50, height: 50)
-                               .foregroundColor(.gray)
-                       }
-                    
-                    
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 50, height: 50)
+                            .clipShape(Circle())
+                    } else {
+                        Image(systemName: "person.crop.circle.fill") // fallback system image
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .foregroundColor(.gray)
+                    }
 
-                    
                     VStack(alignment: .leading) {
                         HStack {
                             Text(
@@ -76,22 +67,21 @@ struct MatchView: View {
                     }
                     .foregroundColor(Color(hex: "253366"))
                     .font(.headline)
-
                 }
                 .padding(.horizontal, 20)
+                ScoreCard()
 
                 HStack {
                     Text("Events")
                         .font(.headline)
                     Spacer()
+                    
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
                 .padding(.bottom, 4)
-                
                 CalendarView()
-
-                Spacer()
+                EventInvitationView()
             }
             .background(Color(hex: "F7F7F7"))
             .navigationTitle("Matches")
@@ -120,3 +110,4 @@ struct MatchView: View {
         .environmentObject(authVM)
         .environmentObject(matchVM)
 }
+
