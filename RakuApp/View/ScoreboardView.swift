@@ -1,14 +1,15 @@
-//
 //  ScoreboardView.swift
 //  RakuApp
 //
 //  Created by student on 03/06/25.
-//
 
 import SwiftUI
+import SwiftData
 
 struct ScoreboardView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var context
+    @EnvironmentObject var matchVM: MatchDetailViewModel
 
     @State private var blueScore = 0
     @State private var redScore = 0
@@ -17,16 +18,17 @@ struct ScoreboardView: View {
     @State private var gameOver = false
     @State private var winnerColor: Color? = nil
 
+    var match: MatchDetailModel
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // 전체 내용 (회전될 HStack)
                 HStack(spacing: 0) {
-                    // BLUE TEAM
                     ZStack(alignment: .topLeading) {
                         Color.blue
                         VStack {
-                            teamBox(color: .blue, name: "Player 1", name2: "Player 1")
+                            let leftPlayers = match.players.count == 2 ? [match.players[0]] : Array(match.players.prefix(2))
+                            teamBox(color: .blue, names: leftPlayers)
                             Spacer()
                             Text("\(blueScore)")
                                 .font(.system(size: 120, weight: .bold))
@@ -50,11 +52,11 @@ struct ScoreboardView: View {
                         increaseScore(team: .blue)
                     }
 
-                    // RED TEAM
                     ZStack(alignment: .topTrailing) {
                         Color.red
                         VStack {
-                            teamBox(color: .red, name: "Player 2", name2: "Player 2")
+                            let rightPlayers = match.players.count == 2 ? [match.players[1]] : Array(match.players.dropFirst(2))
+                            teamBox(color: .red, names: rightPlayers)
                             Spacer()
                             Text("\(redScore)")
                                 .font(.system(size: 120, weight: .bold))
@@ -81,6 +83,9 @@ struct ScoreboardView: View {
                 .overlay(alignment: .top) {
                     HStack {
                         Button("Back") {
+                            match.blueScore = blueScore
+                            match.redScore = redScore
+                            try? context.save()
                             dismiss()
                         }
                         .foregroundColor(.blue)
@@ -118,12 +123,19 @@ struct ScoreboardView: View {
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 1.77)
             }
             .ignoresSafeArea()
-            .contentShape(Rectangle())
             .onTapGesture {
                 if gameOver {
+                    match.blueScore = blueScore
+                    match.redScore = redScore
+                    match.isFinished = true
+                    try? context.save()
                     dismiss()
                 }
             }
+        }
+        .onAppear {
+            blueScore = match.blueScore
+            redScore = match.redScore
         }
     }
 
@@ -160,15 +172,13 @@ struct ScoreboardView: View {
     }
 
     @ViewBuilder
-    func teamBox(color: Color, name: String, name2: String) -> some View {
+    func teamBox(color: Color, names: [String]) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Image(systemName: "person.circle.fill")
-                Text(name)
-            }
-            HStack {
-                Image(systemName: "person.circle.fill")
-                Text(name2)
+            ForEach(names, id: \.self) { name in
+                HStack {
+                    Image(systemName: "person.circle.fill")
+                    Text(name)
+                }
             }
         }
         .padding(8)
@@ -179,7 +189,12 @@ struct ScoreboardView: View {
     }
 }
 
-#Preview {
-    ScoreboardView()
-}
 
+#Preview {
+    let match = MatchDetailModel(players: ["Alice", "Bob"], bestOf: 1, gameUpTo: 21, maxScore: 30)
+    match.blueScore = 0
+    match.redScore = 0
+    match.isFinished = false
+    return ScoreboardView(match: match)
+        .environmentObject(MatchDetailViewModel())
+}

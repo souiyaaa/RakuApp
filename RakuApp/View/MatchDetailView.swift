@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MatchDetailView: View {
+    @EnvironmentObject var matchVM: MatchDetailViewModel
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -89,59 +91,73 @@ struct MatchDetailView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     // Current Match
-                    VStack(spacing: 8) {
-                        Text("Current Match")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                    if let match = matchVM.matches.first {
+                        NavigationLink(destination: ScoreboardView(match: match).environmentObject(matchVM)) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Current Matches")
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
 
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text("Alice")
-                                Text("Bob")
+                                ForEach(matchVM.matches) { match in
+                                    NavigationLink(destination: ScoreboardView(match: match).environmentObject(matchVM)) {
+                                        VStack(spacing: 8) {
+                                            HStack {
+                                                // 왼쪽 팀 (Player 1 & 2)
+                                                VStack(alignment: .leading) {
+                                                    if match.players.indices.contains(0) {
+                                                        Text(match.players[0])
+                                                    }
+                                                    if match.players.indices.contains(1) && match.players.count >= 4 {
+                                                        Text(match.players[1])
+                                                    }
+                                                }
+                                                .font(.caption)
+                                                .foregroundColor(.white)
+
+                                                Spacer()
+
+                                                // 점수
+                                                Text("\(match.blueScore)")
+                                                    .font(.title)
+                                                    .bold()
+                                                    .foregroundColor(.white)
+
+                                                Spacer()
+
+                                                Text("\(match.redScore)")
+                                                    .font(.title)
+                                                    .bold()
+                                                    .foregroundColor(.white)
+
+                                                Spacer()
+
+                                                // 오른쪽 팀 (Player 2 or Player 3 & 4)
+                                                VStack(alignment: .trailing) {
+                                                    if match.players.count == 2 {
+                                                        Text(match.players[1])
+                                                    } else if match.players.count >= 4 {
+                                                        if match.players.indices.contains(2) {
+                                                            Text(match.players[2])
+                                                        }
+                                                        if match.players.indices.contains(3) {
+                                                            Text(match.players[3])
+                                                        }
+                                                    }
+                                                }
+                                                .font(.caption)
+                                                .foregroundColor(.white)
+                                            }
+                                            .padding()
+                                            .background(Color(red: 0.0, green: 0.2, blue: 0.5))
+                                            .cornerRadius(12)
+                                        }
+                                    }
+                                }
                             }
-                            .font(.caption)
-                            .foregroundColor(.white)
-
-                            Spacer()
-
-                            Text("15")
-                                .font(.title)
-                                .bold()
-                                .foregroundColor(.white)
-
-                            Spacer()
-
-                            VStack {
-                                Text("12:10")
-                                Text("Weston")
-                            }
-                            .font(.caption)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.white)
-
-                            Spacer()
-
-                            Text("13")
-                                .font(.title)
-                                .bold()
-                                .foregroundColor(.white)
-
-                            Spacer()
-
-                            VStack(alignment: .trailing) {
-                                Text("Charlie")
-                                Text("Diana")
-                            }
-                            .font(.caption)
-                            .foregroundColor(.white)
+                            .padding(.horizontal)
                         }
-                        .padding()
-                        .background(Color(red: 0.0, green: 0.2, blue: 0.5))
-                        .cornerRadius(12)
                     }
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+
 
                     // History
                     VStack(alignment: .leading, spacing: 8) {
@@ -201,4 +217,5 @@ struct ActionButtonView: View {
 
 #Preview {
     MatchDetailView()
+        .environmentObject(MatchDetailViewModel())
 }
