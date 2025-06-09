@@ -1,14 +1,8 @@
-//
-//  ScoreboardView.swift
-//  RakuApp
-//
-//  Created by student on 03/06/25.
-//
-
 import SwiftUI
 
 struct ScoreboardView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.presentationMode) var presentationMode
+    @ObservedObject var matchState: MatchState
 
     @State private var blueScore = 0
     @State private var redScore = 0
@@ -20,13 +14,11 @@ struct ScoreboardView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // 전체 내용 (회전될 HStack)
                 HStack(spacing: 0) {
-                    // BLUE TEAM
                     ZStack(alignment: .topLeading) {
                         Color.blue
                         VStack {
-                            teamBox(color: .blue, name: "Player 1", name2: "Player 1")
+                            teamBox(color: .blue, names: teamNames(isBlue: true))
                             Spacer()
                             Text("\(blueScore)")
                                 .font(.system(size: 120, weight: .bold))
@@ -50,11 +42,10 @@ struct ScoreboardView: View {
                         increaseScore(team: .blue)
                     }
 
-                    // RED TEAM
                     ZStack(alignment: .topTrailing) {
                         Color.red
                         VStack {
-                            teamBox(color: .red, name: "Player 2", name2: "Player 2")
+                            teamBox(color: .red, names: teamNames(isBlue: false))
                             Spacer()
                             Text("\(redScore)")
                                 .font(.system(size: 120, weight: .bold))
@@ -81,7 +72,7 @@ struct ScoreboardView: View {
                 .overlay(alignment: .top) {
                     HStack {
                         Button("Back") {
-                            dismiss()
+                            presentationMode.wrappedValue.dismiss()
                         }
                         .foregroundColor(.blue)
                         Spacer()
@@ -121,7 +112,7 @@ struct ScoreboardView: View {
             .contentShape(Rectangle())
             .onTapGesture {
                 if gameOver {
-                    dismiss()
+                    presentationMode.wrappedValue.dismiss()
                 }
             }
         }
@@ -160,15 +151,13 @@ struct ScoreboardView: View {
     }
 
     @ViewBuilder
-    func teamBox(color: Color, name: String, name2: String) -> some View {
+    func teamBox(color: Color, names: [String]) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Image(systemName: "person.circle.fill")
-                Text(name)
-            }
-            HStack {
-                Image(systemName: "person.circle.fill")
-                Text(name2)
+            ForEach(names, id: \.self) { name in
+                HStack {
+                    Image(systemName: "person.circle.fill")
+                    Text(name)
+                }
             }
         }
         .padding(8)
@@ -177,9 +166,17 @@ struct ScoreboardView: View {
         .cornerRadius(12)
         .foregroundColor(.white)
     }
+
+    func teamNames(isBlue: Bool) -> [String] {
+        let users = matchState.selectedUsers
+        if matchState.matchType == .single {
+            return [isBlue ? users.first?.name ?? "" : users.dropFirst().first?.name ?? ""]
+        } else {
+            return isBlue ? Array(users.prefix(2)).map { $0.name } : Array(users.dropFirst(2)).map { $0.name }
+        }
+    }
 }
 
 #Preview {
-    ScoreboardView()
+    ScoreboardView(matchState: MatchState())
 }
-

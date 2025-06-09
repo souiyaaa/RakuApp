@@ -1,10 +1,3 @@
-//
-//  SinglesView.swift
-//  RakuApp
-//
-//  Created by student on 03/06/25.
-//
-
 import SwiftUI
 
 struct SinglesView: View {
@@ -12,26 +5,26 @@ struct SinglesView: View {
     @State private var gameUpTo = 21
     @State private var maxScore = 30
 
-    @State private var startMatch = false // ✅ 상태 변수 추가
+    @State private var startMatch = false
+    @State private var showFriendPicker = false
+    @StateObject private var userVM = UserViewModel()
+    @ObservedObject var matchState: MatchState
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                // 🏸 코트: 2개는 빈 박스, 2개는 선수
-                VStack(spacing: 10) {
-                    HStack(spacing: 20) {
-                        EmptyCourtBox()
-                        SinglePlayerView(name: "Player 1")
-                    }
-                    HStack(spacing: 20) {
-                        SinglePlayerView(name: "Player 2")
-                        EmptyCourtBox()
-                    }
+                Button("Choose Friends") {
+                    showFriendPicker = true
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(12)
+                .sheet(isPresented: $showFriendPicker) {
+                    NavigationView {
+                        MatchFriendView(userVM: userVM, selectedUsers: $matchState.selectedUsers)
+                    }
+                }
 
                 // 참가자 명단
                 VStack(alignment: .leading, spacing: 10) {
@@ -52,29 +45,24 @@ struct SinglesView: View {
                 }
                 .padding(.horizontal)
 
-                // 랜덤 버튼
-                Button("Random Match Detail") {}
-                    .foregroundColor(.blue)
+                Text("Participants: \(matchState.selectedUsers.map { $0.name }.joined(separator: ", "))")
+                    .padding()
 
-                // 👉 Start Match 버튼
-                Button(action: {
+                Button("Start Match") {
+                    matchState.matchType = .single
                     startMatch = true
-                }) {
-                    Text("Start Match")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(12)
                 }
-                .padding(.horizontal)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue)
+                .cornerRadius(12)
 
-                // 👉 NavigationLink로 ScoreboardView로 이동
-                NavigationLink(destination: ScoreboardView(), isActive: $startMatch) {
+                NavigationLink(destination: ScoreboardView(matchState: matchState), isActive: $startMatch) {
                     EmptyView()
                 }
             }
-            .padding(.vertical)
+            .padding()
         }
     }
 }
@@ -167,7 +155,5 @@ struct SingleSettingRow: View {
 }
 
 #Preview {
-    SinglesView()
+    SinglesView(matchState: MatchState())
 }
-
-

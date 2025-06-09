@@ -82,6 +82,24 @@ struct MatchView: View {
                 .padding(.bottom, 4)
                 CalendarView()
                 EventInvitationView()
+                // Quick Match 버튼
+                HStack {
+                    Spacer()
+                    NavigationLink(destination: MatchDetailView()) {
+                        HStack {
+                            Image(systemName: "bolt.fill")
+                            Text("Quick Match")
+                                .fontWeight(.semibold)
+                        }
+                        .padding()
+                        .background(Color(hex: "253366"))
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 2)
+                    }
+                    Spacer()
+                }
+                .padding(.vertical)
             }
             .background(Color(hex: "F7F7F7"))
             .navigationTitle("Matches")

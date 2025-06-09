@@ -1,10 +1,3 @@
-//
-//  DoublesView.swift
-//  RakuApp
-//
-//  Created by student on 03/06/25.
-//
-
 import SwiftUI
 
 struct DoublesView: View {
@@ -13,6 +6,8 @@ struct DoublesView: View {
     @State private var maxScore = 30
 
     @State private var startMatch = false
+    @ObservedObject var matchState: MatchState
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
@@ -38,27 +33,31 @@ struct DoublesView: View {
                     }
                 }
                 .padding(.horizontal)
-                
-                // 설정
+
                 VStack(spacing: 10) {
-                    SingleSettingRow(title: "Best of", value: $bestOf)
-                    SingleSettingRow(title: "Game up to", value: $gameUpTo, highlighted: true)
-                    SingleSettingRow(title: "Max Score", value: $maxScore)
+                    SettingControlRow(title: "Best of", value: $bestOf)
+                    SettingControlRow(title: "Game up to", value: $gameUpTo, highlighted: true)
+                    SettingControlRow(title: "Max Score", value: $maxScore)
                 }
                 .padding(.horizontal)
 
                 Button("Random Match Detail") {}
                     .foregroundColor(.blue)
 
-                NavigationLink(destination: ScoreboardView()) {
-                    Text("Start Match")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(12)
+                Button("Start Match") {
+                    matchState.matchType = .doubles
+                    startMatch = true
                 }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue)
+                .cornerRadius(12)
                 .padding(.horizontal)
+
+                NavigationLink(destination: ScoreboardView(matchState: matchState), isActive: $startMatch) {
+                    EmptyView()
+                }
             }
             .padding(.vertical)
         }
@@ -94,7 +93,6 @@ struct TeamBox: View {
         .frame(width: 150)
     }
 }
-
 
 struct SettingControlRow: View {
     var title: String
@@ -140,5 +138,5 @@ struct SettingControlRow: View {
 }
 
 #Preview {
-    DoublesView()
+    DoublesView(matchState: MatchState())
 }
