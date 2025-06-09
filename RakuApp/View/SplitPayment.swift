@@ -56,13 +56,13 @@ struct SplitPayment: View {
                         }
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            if let userId = participant.id {
-                                if selectedUsers.contains(userId) {
-                                    selectedUsers.remove(userId)
-                                } else {
-                                    selectedUsers.insert(userId)
-                                }
-                            }
+//                            if let userId = participant.id {
+//                                if selectedUsers.contains(userId) {
+//                                    selectedUsers.remove(userId)
+//                                } else {
+//                                    selectedUsers.insert(userId)
+//                                }
+//                            }
                         }
                     }
                 }
@@ -97,31 +97,31 @@ struct SplitPayment: View {
     }
 }
 
-#Preview {
-    // Mock data for preview
-    let mockUser = MyUser(id: "user1", name: "Alice", email: "alice@example.com", password: "p", experience: "Beginner")
-    let mockUser2 = MyUser(id: "user2", name: "Bob", email: "bob@example.com", password: "p", experience: "Advance")
-    let mockUser3 = MyUser(id: "user3", name: "Charlie", email: "charlie@example.com", password: "p", experience: "Pro")
-
-    let userViewModel = UserViewModel()
-    userViewModel.myUserData = mockUser // Set current user for context
-
-    let mockMatch = Match(
-        id: "match1",
-        name: "Preview Match",
-        description: "Description",
-        date: Date(),
-        courtCost: 120000.0,
-        players: [mockUser, mockUser2, mockUser3],
-        games: [],
-        paidUserIds: ["user1"], // Alice has already paid
-        location: "Preview Location"
-    )
-
-    let gameViewModel = GameViewModel(userViewModel: userViewModel)
-    gameViewModel.currentMatch = mockMatch // Set the current match for the preview
-
-    return SplitPayment()
-        .environmentObject(gameViewModel)
-        .environmentObject(userViewModel)
-}
+//#Preview {
+//    // Mock data for preview
+//    let mockUser = MyUser(id: "user1", name: "Alice", email: "alice@example.com", password: "p", experience: "Beginner")
+//    let mockUser2 = MyUser(id: "user2", name: "Bob", email: "bob@example.com", password: "p", experience: "Advance")
+//    let mockUser3 = MyUser(id: "user3", name: "Charlie", email: "charlie@example.com", password: "p", experience: "Pro")
+//
+//    let userViewModel = UserViewModel()
+//    userViewModel.myUserData = mockUser // Set current user for context
+//
+//    let mockMatch = Match(
+//        id: "match1",
+//        name: "Preview Match",
+//        description: "Description",
+//        date: Date(),
+//        courtCost: 120000.0,
+//        players: [mockUser, mockUser2, mockUser3],
+//        games: [],
+//        paidUserIds: ["user1"], // Alice has already paid
+//        location: "Preview Location"
+//    )
+//
+//    let gameViewModel = GameViewModel(userViewModel: userViewModel)
+//    gameViewModel.currentMatch = mockMatch // Set the current match for the preview
+//
+//    return SplitPayment()
+//        .environmentObject(gameViewModel)
+//        .environmentObject(userViewModel)
+//}

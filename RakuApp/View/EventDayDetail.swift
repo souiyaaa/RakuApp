@@ -126,7 +126,7 @@ struct EventRowView: View {
                         .sheet(isPresented: $showingSplitPayment) {
                             SplitPayment()
                                 .environmentObject(gameViewModel) // Pass environment object to the sheet
-                                .environmentObject(userViewModel)
+//                                .environmentObject(userViewModel)
                         }
 
                         Button("Edit Event") {
@@ -157,50 +157,50 @@ struct EventRowView: View {
     }()
 }
 
-#Preview{
-    // Mock user for preview
-    let mockUser = MyUser(
-        id: "mockUser123",
-        name: "Preview User",
-        email: "preview@example.com",
-        password: "password",
-        experience: "Beginner"
-    )
-
-    // UserViewModel setup for preview
-    let userViewModel = UserViewModel()
-    userViewModel.myUserData = mockUser
-
-    // Mock matches for preview
-    let mockMatch1 = Match(
-        id: UUID().uuidString,
-        name: "Junior Badminton Tournament",
-        description: "A competitive tournament for junior players.",
-        date: Date(), // Current time for now
-        courtCost: 100.0,
-        players: [mockUser], // User is invited
-        games: [],
-        paidUserIds: [],
-        location: "Weston Citraland"
-    )
-
-    let mockMatch2 = Match(
-        id: UUID().uuidString,
-        name: "Evening Friendly Match",
-        description: "Casual game with friends.",
-        date: Calendar.current.date(byAdding: .hour, value: 1, to: Date())!, // Future time
-        courtCost: 50.0,
-        players: [], // User is not invited
-        games: [],
-        paidUserIds: [],
-        location: "Galaxy Sports Center"
-    )
-
-    // GameViewModel setup for preview
-    let gameViewModel = GameViewModel(userViewModel: userViewModel)
-    gameViewModel.matches = [mockMatch1, mockMatch2]
-
-    return EventInvitationView()
-        .environmentObject(gameViewModel)
-        .environmentObject(userViewModel)
-}
+//#Preview{
+//    // Mock user for preview
+//    let mockUser = MyUser(
+//        id: "mockUser123",
+//        name: "Preview User",
+//        email: "preview@example.com",
+//        password: "password",
+//        experience: "Beginner"
+//    )
+//
+//    // UserViewModel setup for preview
+//    let userViewModel = UserViewModel()
+//    userViewModel.myUserData = mockUser
+//
+//    // Mock matches for preview
+//    let mockMatch1 = Match(
+//        id: UUID().uuidString,
+//        name: "Junior Badminton Tournament",
+//        description: "A competitive tournament for junior players.",
+//        date: Date(), // Current time for now
+//        courtCost: 100.0,
+//        players: [mockUser], // User is invited
+//        games: [],
+//        paidUserIds: [],
+//        location: "Weston Citraland"
+//    )
+//
+//    let mockMatch2 = Match(
+//        id: UUID().uuidString,
+//        name: "Evening Friendly Match",
+//        description: "Casual game with friends.",
+//        date: Calendar.current.date(byAdding: .hour, value: 1, to: Date())!, // Future time
+//        courtCost: 50.0,
+//        players: [], // User is not invited
+//        games: [],
+//        paidUserIds: [],
+//        location: "Galaxy Sports Center"
+//    )
+//
+//    // GameViewModel setup for preview
+//    let gameViewModel = GameViewModel(userViewModel: userViewModel)
+//    gameViewModel.matches = [mockMatch1, mockMatch2]
+//
+//    return EventInvitationView()
+//        .environmentObject(gameViewModel)
+//        .environmentObject(userViewModel)
+//}

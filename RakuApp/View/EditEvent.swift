@@ -172,13 +172,13 @@ struct AddPlayersView: View {
                             }
                         }
                         .onTapGesture {
-                            if let id = user.id {
-                                if selectedPlayers.contains(id) {
-                                    selectedPlayers.remove(id)
-                                } else {
-                                    selectedPlayers.insert(id)
-                                }
-                            }
+//                            if let id = user.id {
+//                                if selectedPlayers.contains(id) {
+//                                    selectedPlayers.remove(id)
+//                                } else {
+//                                    selectedPlayers.insert(id)
+//                                }
+//                            }
                         }
                     }
                 }
@@ -229,28 +229,28 @@ struct SearchBar: View {
     }
 }
 
-#Preview {
-    // Mock data for preview
-    let mockUser = MyUser(id: "user1", name: "Alice", email: "alice@example.com", password: "p", experience: "Beginner")
-    let userViewModel = UserViewModel()
-    userViewModel.myUserData = mockUser
-
-    let mockMatch = Match(
-        id: "match1",
-        name: "Badminton Session",
-        description: "Casual game at the community hall.",
-        date: Date(),
-        courtCost: 80000.0,
-        players: [mockUser],
-        games: [],
-        paidUserIds: [],
-        location: "Community Hall"
-    )
-
-    let gameViewModel = GameViewModel(userViewModel: userViewModel)
-    gameViewModel.currentMatch = mockMatch
-
-    return EditEventView()
-        .environmentObject(gameViewModel)
-        .environmentObject(userViewModel) // Also pass userViewModel for AddPlayersView in preview
-}
+//#Preview {
+//    // Mock data for preview
+//    let mockUser = MyUser(id: "user1", name: "Alice", email: "alice@example.com", password: "p", experience: "Beginner")
+//    let userViewModel = UserViewModel()
+//    userViewModel.myUserData = mockUser
+//
+//    let mockMatch = Match(
+//        id: "match1",
+//        name: "Badminton Session",
+//        description: "Casual game at the community hall.",
+//        date: Date(),
+//        courtCost: 80000.0,
+//        players: [mockUser],
+//        games: [],
+//        paidUserIds: [],
+//        location: "Community Hall"
+//    )
+//
+//    let gameViewModel = GameViewModel(userViewModel: userViewModel)
+//    gameViewModel.currentMatch = mockMatch
+//
+//    return EditEventView()
+//        .environmentObject(gameViewModel)
+//        .environmentObject(userViewModel) // Also pass userViewModel for AddPlayersView in preview
+//}
