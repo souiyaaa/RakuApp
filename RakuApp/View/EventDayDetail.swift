@@ -1,4 +1,3 @@
-// souiyaaa/rakuapp/RakuApp-b4efc2de3e01e479eee184089dffb9fa47c7af7d/RakuApp/View/EventDayDetail.swift
 
 import SwiftUI
 

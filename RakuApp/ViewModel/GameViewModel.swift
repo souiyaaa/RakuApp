@@ -16,28 +16,41 @@ class GameViewModel: ObservableObject {
         // fetchMatches()
     }
 
-    func fetchMatches() {
+    func fetchMatches(for selectedDate: Date?) {
         let currentUserId = userViewModel.myUserData.id
         
-        // FIX: Add a guard to prevent fetching if the user ID is not yet available.
         guard !currentUserId.isEmpty else {
             print("User ID not available yet. Skipping match fetch.")
             return
         }
         
-        ref.observe(.value) { snapshot in
+        var query = ref.queryOrdered(byChild: "date")
+        
+        if let selectedDate = selectedDate {
+            // Set startOfDay and endOfDay timestamps (in seconds since 1970)
+            let startOfDayDate = Calendar.current.startOfDay(for: selectedDate)
+            let endOfDayDate = Calendar.current.date(byAdding: .day, value: 1, to: startOfDayDate)!
+
+            let startOfDay = startOfDayDate.timeIntervalSince1970
+            let endOfDay = endOfDayDate.timeIntervalSince1970
+
+
+            
+            print("Fetching matches between \(startOfDay) and \(endOfDay)")
+            
+            query = query.queryStarting(atValue: startOfDay).queryEnding(atValue: endOfDay)
+        }
+        
+        query.observeSingleEvent(of: .value) { snapshot in
             guard let value = snapshot.value as? [String: Any] else {
                 self.matches = []
                 return
             }
-
-            let filteredMatches = value.compactMap {
-                (key, matchData) -> Match? in
+            
+            let filteredMatches = value.compactMap { (key, matchData) -> Match? in
                 guard let matchDict = matchData as? [String: Any],
-                    let jsonData = try? JSONSerialization.data(
-                        withJSONObject: matchDict),
-                    let match = try? JSONDecoder().decode(
-                        Match.self, from: jsonData)
+                      let jsonData = try? JSONSerialization.data(withJSONObject: matchDict),
+                      let match = try? JSONDecoder().decode(Match.self, from: jsonData)
                 else {
                     return nil
                 }
@@ -55,6 +68,7 @@ class GameViewModel: ObservableObject {
             }
         }
     }
+
     
     // The rest of your GameViewModel code remains the same...
     // addMatch, updateMatch, etc. are all correct.
@@ -98,7 +112,7 @@ class GameViewModel: ObservableObject {
         let newMatch = Match(
             name: name,
             description: description,
-            date: date,
+            date: date, // keep as Date in the struct
             courtCost: courtCost,
             players: finalPlayers,
             games: [],
@@ -106,24 +120,29 @@ class GameViewModel: ObservableObject {
             location: location
         )
 
+        // Prepare JSON object for Firebase
         guard let jsonData = try? JSONEncoder().encode(newMatch),
-            let json = try? JSONSerialization.jsonObject(with: jsonData)
-                as? [String: Any]
-        else {
+              var jsonObject = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] else {
             print("function failed to add match")
             return false
         }
 
-        ref.child(newMatch.id).setValue(json)
-        
+        // Store date as timestamp (Double)
+        jsonObject["date"] = date.timeIntervalSince1970
+
+        // Save to Firebase
+        ref.child(newMatch.id).setValue(jsonObject)
+
+        // Update local state
         DispatchQueue.main.async {
             self.matches.append(newMatch)
         }
-        
+
         print(newMatch)
         print("function is done ")
         return true
     }
+
 
     func updateMatch(_ match: Match) {
             guard let jsonData = try? JSONEncoder().encode(match),

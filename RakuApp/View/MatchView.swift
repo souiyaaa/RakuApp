@@ -1,4 +1,3 @@
-// souiyaaa/rakuapp/RakuApp-b4efc2de3e01e479eee184089dffb9fa47c7af7d/RakuApp/View/MatchView.swift
 
 import SwiftUI
 
@@ -110,10 +109,20 @@ struct MatchView: View {
                 }
             }
         }
-        .onChange(of: authVM.userViewModel.myUserData.id) { newUserId in
-            if !newUserId.isEmpty {
-                gameVM.fetchMatches()
+
+        .onAppear {
+            if let selectedDate = calendarVM.selectedDay {
+                gameVM.fetchMatches(for: selectedDate)
             }
         }
+        .onChange(of: calendarVM.selectedDay) { newDate in
+            gameVM.fetchMatches(for: newDate)
+        }
+        .onChange(of: authVM.userViewModel.myUserData.id) { newUserId in
+            if !newUserId.isEmpty, let selectedDate = calendarVM.selectedDay {
+                gameVM.fetchMatches(for: selectedDate)
+            }
+        }
+
     }
 }
