@@ -1,127 +1,83 @@
-//
-//  SplitPayment.swift
-//  RakuApp
-//
-//  Created by student on 05/06/25.
-//
+// souiyaaa/rakuapp/RakuApp-b4efc2de3e01e479eee184089dffb9fa47c7af7d/RakuApp/View/SplitPayment.swift
 
 import SwiftUI
 
 struct SplitPayment: View {
     @EnvironmentObject var gameViewModel: GameViewModel
-    @EnvironmentObject var userViewModel: UserViewModel // To get all users for participant list
-
-    @State private var selectedUsers: Set<String> = [] // Changed to use user IDs for selection
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         NavigationView {
-            VStack(alignment: .leading) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Cost Per Pack")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    Text(gameViewModel.currentMatch?.courtCost != nil ? "Rp\(Int(gameViewModel.currentMatch!.courtCost))" : "N/A")
-                        .font(.title)
-                        .fontWeight(.bold)
-                    Text("Ask the event organizers for bank info")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-                .padding()
+            // Check if there is a current match selected
+            if let currentMatch = gameViewModel.currentMatch {
+                VStack(alignment: .leading) {
+                    // Display Total Cost
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Total Cost")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        
+                        Text("Rp \(Int(currentMatch.courtCost))")
+                            .font(.system(size: 40, weight: .bold))
+                    }
+                    .padding()
 
-                List {
-                    ForEach(gameViewModel.currentMatch?.players ?? [], id: \.id) { participant in
+                    Divider()
+
+                    // Header for the list
+                    Text("Participants")
+                        .font(.headline)
+                        .padding(.horizontal)
+
+                    // List of participants in the event
+                    List(currentMatch.players) { participant in
                         HStack {
-                            Image(systemName: "person.crop.circle.fill")
+                            Image(systemName: "person.circle.fill")
                                 .resizable()
                                 .frame(width: 40, height: 40)
-
-                            VStack(alignment: .leading) {
-                                Text(participant.name)
-                                    .fontWeight(.medium)
-                                Text(participant.email) // Using email as a placeholder for location/detail
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                            }
-
+                                .foregroundColor(.gray)
+                            
+                            Text(participant.name)
+                                .fontWeight(.medium)
+                            
                             Spacer()
-
-                            if gameViewModel.currentMatch?.paidUserIds.contains(participant.id ?? "") ?? false {
+                            
+                            // Display checkmark if the user has paid
+                            if currentMatch.paidUserIds.contains(participant.id) {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.green)
-                            } else if selectedUsers.contains(participant.id ?? "") { // Check if selected in current session
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.blue)
+                                    .font(.title2)
+                            } else {
+                                // Display an empty circle if not paid
+                                Image(systemName: "circle")
+                                    .foregroundColor(.gray)
+                                    .font(.title2)
                             }
                         }
-                        .contentShape(Rectangle())
+                        .padding(.vertical, 8)
+                        // FIX: The tap gesture now directly uses participant.id
                         .onTapGesture {
-//                            if let userId = participant.id {
-//                                if selectedUsers.contains(userId) {
-//                                    selectedUsers.remove(userId)
-//                                } else {
-//                                    selectedUsers.insert(userId)
-//                                }
-//                            }
+                            // `participant.id` is not optional, so we access it directly.
+                            let participantId = participant.id
+                            
+                            // We call the ViewModel function to toggle the paid status.
+                            gameViewModel.markPlayerAsPaid(matchId: currentMatch.id, userId: participantId)
+                        }
+                    }
+                    .listStyle(PlainListStyle())
+                }
+                .navigationTitle("Payment Details")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Done") {
+                            presentationMode.wrappedValue.dismiss()
                         }
                     }
                 }
-                .listStyle(PlainListStyle())
-
-                Button(action: {
-                    // Save action - mark selected users as paid in Firebase
-                    if let matchId = gameViewModel.currentMatch?.id {
-                        for userId in selectedUsers {
-                            gameViewModel.markPlayerAsPaid(matchId: matchId, userId: userId)
-                        }
-                    }
-                }) {
-                    Text("Save Update")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-                .padding(.horizontal)
-            }
-            .navigationTitle("Payment Info")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-        .onAppear {
-            // Initialize selectedUsers based on already paid users from the current match
-            if let paidUserIds = gameViewModel.currentMatch?.paidUserIds {
-                selectedUsers = Set(paidUserIds)
+            } else {
+                Text("No match details available.")
             }
         }
     }
 }
-
-//#Preview {
-//    // Mock data for preview
-//    let mockUser = MyUser(id: "user1", name: "Alice", email: "alice@example.com", password: "p", experience: "Beginner")
-//    let mockUser2 = MyUser(id: "user2", name: "Bob", email: "bob@example.com", password: "p", experience: "Advance")
-//    let mockUser3 = MyUser(id: "user3", name: "Charlie", email: "charlie@example.com", password: "p", experience: "Pro")
-//
-//    let userViewModel = UserViewModel()
-//    userViewModel.myUserData = mockUser // Set current user for context
-//
-//    let mockMatch = Match(
-//        id: "match1",
-//        name: "Preview Match",
-//        description: "Description",
-//        date: Date(),
-//        courtCost: 120000.0,
-//        players: [mockUser, mockUser2, mockUser3],
-//        games: [],
-//        paidUserIds: ["user1"], // Alice has already paid
-//        location: "Preview Location"
-//    )
-//
-//    let gameViewModel = GameViewModel(userViewModel: userViewModel)
-//    gameViewModel.currentMatch = mockMatch // Set the current match for the preview
-//
-//    return SplitPayment()
-//        .environmentObject(gameViewModel)
-//        .environmentObject(userViewModel)
-//}

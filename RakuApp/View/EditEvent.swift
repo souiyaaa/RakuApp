@@ -1,150 +1,139 @@
-//
-//  EditEvent.swift
-//  RakuApp
-//
-//  Created by student on 05/06/25.
-//
+// souiyaaa/rakuapp/RakuApp-b4efc2de3e01e479eee184089dffb9fa47c7af7d/RakuApp/View/EditEvent.swift
 
 import SwiftUI
 
 struct EditEventView: View {
     @EnvironmentObject var gameViewModel: GameViewModel
-    @Environment(\.dismiss) var dismiss // To close the sheet
+    @Environment(\.dismiss) var dismiss
 
-    @State private var selectedDate = Date() // Use Date for date picker
-    @State private var time: String = "" // Will be populated from match date
+    @State private var selectedDate = Date()
     @State private var cost: String = ""
     @State private var eventName: String = ""
     @State private var description: String = ""
-    @State private var level: String = "" // Assuming this corresponds to 'experience' or a game-specific level
-
+    
+    // State untuk menampilkan sheet AddPlayersView
     @State private var showingAddPlayers = false
-
-    // Formatter for displaying time
-    private let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm WIB"
-        return formatter
-    }()
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    // Reschedule section (simplified with DatePicker)
-                    DatePicker("Date", selection: $selectedDate, displayedComponents: .date)
-                        .datePickerStyle(.graphical)
-                        .padding(.bottom, 10)
+            // Pastikan ada match yang sedang diedit
+            if let currentMatch = gameViewModel.currentMatch {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        // Section untuk Jadwal
+                        VStack(alignment: .leading) {
+                            Text("Reschedule")
+                                .font(.headline)
+                            DatePicker("Date", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
+                                .datePickerStyle(.compact) // Dibuat lebih ringkas
+                        }
 
-                    // Participants (displaying actual participant count and button to add more)
-                    HStack {
-                        HStack(spacing: -10) {
-                            ForEach(gameViewModel.currentMatch?.players.prefix(3) ?? [], id: \.id) { _ in
-                                Image(systemName: "person.circle.fill")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
+                        Divider()
+
+                        // Section untuk Peserta
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Participants")
+                                .font(.headline)
+                            
+                            HStack {
+                                HStack(spacing: -10) {
+                                    ForEach(currentMatch.players.prefix(5), id: \.id) { player in
+                                        Image(systemName: "person.circle.fill")
+                                            .resizable()
+                                            .frame(width: 30, height: 30)
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                                Text("\(currentMatch.players.count) Participants")
+                                    .font(.subheadline)
+                                Spacer()
+                                Button("Manage Players") {
+                                    showingAddPlayers = true
+                                }
+                                .font(.subheadline)
                             }
                         }
 
-                        Text("\(gameViewModel.currentMatch?.players.count ?? 0) Participants")
-                            .font(.subheadline)
-
-                        Spacer()
-
-                        Button("Add/Remove Players") {
-                            showingAddPlayers = true
-                        }
-                        .font(.subheadline)
-                        .sheet(isPresented: $showingAddPlayers) {
-                            // You'll need a new view for adding/removing players
-                            // This would typically involve fetching all users and allowing selection
-                            // For simplicity, we'll just have a placeholder here.
-                            AddPlayersView(matchId: gameViewModel.currentMatch?.id ?? "")
-                                .environmentObject(gameViewModel)
-                                .environmentObject(gameViewModel.userViewModel) // Pass userViewModel to AddPlayersView
+                        Divider()
+                        
+                        // Section untuk Detail Event
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Event Details")
+                                .font(.headline)
+                            TextField("Event Name", text: $eventName)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            TextField("Description", text: $description)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            TextField("Cost of Court", text: $cost)
+                                .keyboardType(.decimalPad)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
                         }
                     }
-
-                    // Fields
-                    Group {
-                        TextField("Time (e.g., 09:13 WIB)", text: $time)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .onChange(of: selectedDate) { newDate in
-                                time = timeFormatter.string(from: newDate)
-                            }
-
-                        TextField("Cost of Court", text: $cost)
-                            .keyboardType(.decimalPad)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                        TextField("Name Your Event", text: $eventName)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                        TextField("Description", text: $description)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                        TextField("Game Level", text: $level)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                    }
-
-                    Button(action: {
-                        // Save update action
-                        if var match = gameViewModel.currentMatch {
-                            match.name = eventName
-                            match.description = description
-                            // Convert cost string to Double
-                            if let newCost = Double(cost) {
-                                match.courtCost = newCost
-                            }
-                            match.date = selectedDate // Update date
-                            // Assuming 'level' might be part of the match or a game
-                            // For now, it's a simple text field.
-                            gameViewModel.updateMatch(match)
-                            dismiss() // Close the sheet
+                    .padding()
+                }
+                .navigationTitle("Edit Event")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    // Tombol untuk batal
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Cancel") {
+                            dismiss()
                         }
-                    }) {
-                        Text("Save Update")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+                    }
+                    // Tombol untuk simpan perubahan
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Save") {
+                            if var match = gameViewModel.currentMatch {
+                                match.name = eventName
+                                match.description = description
+                                if let newCost = Double(cost) {
+                                    match.courtCost = newCost
+                                }
+                                match.date = selectedDate
+                                gameViewModel.updateMatch(match)
+                                dismiss()
+                            }
+                        }
+                        .fontWeight(.bold)
                     }
                 }
-                .padding()
-            }
-            .navigationTitle("Edit Event")
-            .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                // Populate fields when the view appears
-                if let match = gameViewModel.currentMatch {
-                    eventName = match.name
-                    description = match.description
-                    cost = String(format: "%.0f", match.courtCost) // Format to whole number if applicable
-                    selectedDate = match.date
-                    time = timeFormatter.string(from: match.date)
-                    // You might need to add a 'level' property to your Match model
-                    // For now, it remains empty or you can set a default.
+                // Mengisi state dengan data dari match saat view pertama kali muncul
+                .onAppear {
+                    eventName = currentMatch.name
+                    description = currentMatch.description
+                    cost = String(format: "%.0f", currentMatch.courtCost)
+                    selectedDate = currentMatch.date
                 }
+                // Menampilkan sheet untuk menambah/mengurangi pemain
+                .sheet(isPresented: $showingAddPlayers) {
+                    // AddPlayersView sekarang menerima binding ke `showingAddPlayers` untuk menutup dirinya sendiri
+                    AddPlayersView(matchId: currentMatch.id, showingAddPlayers: $showingAddPlayers)
+                }
+            } else {
+                Text("No match selected for editing.")
             }
         }
     }
 }
 
-// Placeholder for AddPlayersView
+// --- Perbaikan pada AddPlayersView ---
 struct AddPlayersView: View {
     @EnvironmentObject var userViewModel: UserViewModel
     @EnvironmentObject var gameViewModel: GameViewModel
+    @Environment(\.dismiss) var dismiss // Untuk menutup sheet
+    
     let matchId: String
+    @Binding var showingAddPlayers: Bool // Binding untuk kontrol sheet
 
     @State private var searchText = ""
-    @State private var selectedPlayers: Set<String> = []
+    @State private var selectedPlayerIDs: Set<String> = []
 
+    // Filtered users
     var filteredUsers: [MyUser] {
         if searchText.isEmpty {
             return userViewModel.myUserDatas
         } else {
-            return userViewModel.filterUserByName(byName: searchText)
+            return userViewModel.myUserDatas.filter { $0.name.lowercased().contains(searchText.lowercased()) }
         }
     }
 
@@ -152,59 +141,72 @@ struct AddPlayersView: View {
         NavigationView {
             VStack {
                 SearchBar(text: $searchText, placeholder: "Search Players")
-
-                List {
-                    ForEach(filteredUsers) { user in
-                        HStack {
-                            Image(systemName: "person.circle.fill")
-                                .resizable()
-                                .frame(width: 40, height: 40)
-                            VStack(alignment: .leading) {
-                                Text(user.name)
-                                Text(user.experience)
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                            }
-                            Spacer()
-                            if selectedPlayers.contains(user.id ?? "") {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.blue)
-                            }
+                List(filteredUsers) { user in
+                    HStack {
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                        VStack(alignment: .leading) {
+                            Text(user.name)
+                            Text(user.experience)
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
                         }
-                        .onTapGesture {
-//                            if let id = user.id {
-//                                if selectedPlayers.contains(id) {
-//                                    selectedPlayers.remove(id)
-//                                } else {
-//                                    selectedPlayers.insert(id)
-//                                }
-//                            }
+                        Spacer()
+                        // Tampilkan checkmark jika pemain dipilih
+                        if selectedPlayerIDs.contains(user.id) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.blue)
+                        }
+                    }
+                    .contentShape(Rectangle())
+                    // FIX: Logika untuk memilih/batal memilih pemain diaktifkan
+                    .onTapGesture {
+                        if selectedPlayerIDs.contains(user.id) {
+                            selectedPlayerIDs.remove(user.id)
+                        } else {
+                            selectedPlayerIDs.insert(user.id)
                         }
                     }
                 }
-                Button("Add Selected Players") {
-                    let playersToAdd = userViewModel.myUserDatas.filter { selectedPlayers.contains($0.id ?? "") }
-                    _ = gameViewModel.addPlayersToMatch(matchId, playersToAdd)
-                    // Potentially dismiss this view
-                }
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
             }
-            .navigationTitle("Add Players")
+            .navigationTitle("Manage Players")
             .navigationBarTitleDisplayMode(.inline)
-        }
-        .onAppear {
-            // Pre-select players already in the match
-            if let currentMatchPlayers = gameViewModel.currentMatch?.players {
-                selectedPlayers = Set(currentMatchPlayers.compactMap { $0.id })
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        showingAddPlayers = false
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        // FIX: Logika untuk menyimpan pemain yang dipilih
+                        // 1. Dapatkan objek MyUser lengkap dari ID yang dipilih
+                        let selectedPlayers = userViewModel.myUserDatas.filter { selectedPlayerIDs.contains($0.id) }
+                        
+                        // 2. Update match dengan daftar pemain yang baru
+                        if var match = gameViewModel.currentMatch {
+                            match.players = selectedPlayers
+                            gameViewModel.updateMatch(match)
+                        }
+                        
+                        // 3. Tutup sheet
+                        showingAddPlayers = false
+                    }
+                    .fontWeight(.bold)
+                }
+            }
+            .onAppear {
+                // Pre-select players yang sudah ada di dalam match saat ini
+                if let currentPlayers = gameViewModel.currentMatch?.players {
+                    selectedPlayerIDs = Set(currentPlayers.map { $0.id })
+                }
             }
         }
     }
 }
 
-// Simple SearchBar for AddPlayersView
+// SearchBar tetap sama
 struct SearchBar: View {
     @Binding var text: String
     var placeholder: String
@@ -216,9 +218,7 @@ struct SearchBar: View {
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
             if !text.isEmpty {
-                Button(action: {
-                    text = ""
-                }) {
+                Button(action: { text = "" }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.gray)
                 }
@@ -228,29 +228,3 @@ struct SearchBar: View {
         .padding(.horizontal)
     }
 }
-
-//#Preview {
-//    // Mock data for preview
-//    let mockUser = MyUser(id: "user1", name: "Alice", email: "alice@example.com", password: "p", experience: "Beginner")
-//    let userViewModel = UserViewModel()
-//    userViewModel.myUserData = mockUser
-//
-//    let mockMatch = Match(
-//        id: "match1",
-//        name: "Badminton Session",
-//        description: "Casual game at the community hall.",
-//        date: Date(),
-//        courtCost: 80000.0,
-//        players: [mockUser],
-//        games: [],
-//        paidUserIds: [],
-//        location: "Community Hall"
-//    )
-//
-//    let gameViewModel = GameViewModel(userViewModel: userViewModel)
-//    gameViewModel.currentMatch = mockMatch
-//
-//    return EditEventView()
-//        .environmentObject(gameViewModel)
-//        .environmentObject(userViewModel) // Also pass userViewModel for AddPlayersView in preview
-//}

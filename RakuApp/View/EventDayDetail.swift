@@ -1,22 +1,22 @@
-//
-//  EventDayDetail.swift
-//  RakuApp
-//
-//  Created by student on 05/06/25.
-//
+// souiyaaa/rakuapp/RakuApp-b4efc2de3e01e479eee184089dffb9fa47c7af7d/RakuApp/View/EventDayDetail.swift
 
 import SwiftUI
 
 struct EventInvitationView: View {
-    @EnvironmentObject var gameViewModel: GameViewModel
-    @EnvironmentObject var userViewModel: UserViewModel // Needed to check current user's ID
+    var matches: [Match]
+    let currentUser: MyUser
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                // Iterate through matches fetched by gameViewModel
-                ForEach(gameViewModel.matches) { match in
-                    EventRowView(match: match, currentUser: userViewModel.myUserData)
+                if matches.isEmpty {
+                    Text("No events for this day.")
+                        .foregroundColor(.gray)
+                        .padding()
+                } else {
+                    ForEach(matches) { match in
+                        EventRowView(match: match, currentUser: currentUser)
+                    }
                 }
             }
             .padding()
@@ -25,16 +25,16 @@ struct EventInvitationView: View {
 }
 
 struct EventRowView: View {
-    let match: Match // Pass the entire match object
-    let currentUser: MyUser // Pass the current user for invitation check
     @EnvironmentObject var gameViewModel: GameViewModel
+    
+    let match: Match
+    let currentUser: MyUser
 
     @State private var showingSplitPayment = false
     @State private var showingEditEvent = false
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            // Time bubble (You might want to format match.date for this)
             Text(match.date, formatter: timeFormatter)
                 .font(.subheadline)
                 .padding(.horizontal, 10)
@@ -46,32 +46,57 @@ struct EventRowView: View {
                 let isInvited = match.players.contains(where: { $0.id == currentUser.id })
 
                 if isInvited {
-                    // Big invite card
-                    ZStack(alignment: .topTrailing) {
+                    // MODIFIED: We will add the button inside this ZStack
+                    ZStack {
                         RoundedRectangle(cornerRadius: 16)
                             .fill(LinearGradient(colors: [.pink, .orange, .blue], startPoint: .topLeading, endPoint: .bottomTrailing))
-                            .frame(height: 100)
+                            // Increased height to make space for the button
+                            .frame(height: 140)
 
-                        Text("YOU ARE\nINVITED")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding()
+                        VStack(spacing: 12) {
+                            Text("YOU ARE\nINVITED")
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
 
-                        // Check if the current user has paid for this match
-                        if match.paidUserIds.contains(currentUser.id ?? "") { // Assuming currentUser.id is not nil
-                            Label("Going", systemImage: "checkmark.circle.fill")
-                                .font(.caption)
-                                .foregroundColor(.green)
-                                .padding(6)
-                                .background(Color.white)
-                                .clipShape(Capsule())
-                                .offset(x: -10, y: 10)
+                            // ADDED: The NavigationLink for "Quick Match" is now here
+                            NavigationLink(destination: MatchDetailView()) {
+                                HStack {
+                                    Image(systemName: "bolt.fill")
+                                    Text("Quick Match")
+                                        .fontWeight(.semibold)
+                                }
+                                .font(.callout)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 16)
+                                .background(Color.white.opacity(0.3))
+                                .foregroundColor(.white)
+                                .cornerRadius(20)
+                            }
+                        }
+                        .padding()
+                        
+                        // This part for the "Going" label remains the same
+                        if match.paidUserIds.contains(currentUser.id ?? "") {
+                            HStack {
+                                Spacer()
+                                VStack {
+                                    Label("Going", systemImage: "checkmark.circle.fill")
+                                        .font(.caption)
+                                        .foregroundColor(.green)
+                                        .padding(6)
+                                        .background(Color.white)
+                                        .clipShape(Capsule())
+                                    Spacer()
+                                }
+                            }
+                            .padding(10)
                         }
                     }
                 }
 
-                // Title and location
+                // ... The rest of the view (match name, location, other buttons) remains the same
                 VStack(alignment: .leading, spacing: 2) {
                     Text(match.name)
                         .fontWeight(.semibold)
@@ -83,10 +108,9 @@ struct EventRowView: View {
                     .foregroundColor(.gray)
                 }
 
-                // Participants
                 HStack(spacing: 6) {
                     HStack(spacing: -10) {
-                        ForEach(match.players.prefix(3), id: \.id) { _ in // Display up to 3 participant icons
+                        ForEach(match.players.prefix(3), id: \.id) { _ in
                             Image(systemName: "person.circle.fill")
                                 .resizable()
                                 .frame(width: 28, height: 28)
@@ -94,19 +118,14 @@ struct EventRowView: View {
                                 .clipShape(Circle())
                         }
                     }
-
                     Text("\(match.players.count) Participants")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
 
-                // Buttons
                 if isInvited {
                     HStack(spacing: 10) {
-                        Button("Get Direction") {
-                            // Action for Get Direction
-                            // You might want to integrate MapKit here
-                        }
+                        Button("Get Direction") {}
                         .font(.subheadline)
                         .padding(.horizontal)
                         .padding(.vertical, 6)
@@ -115,7 +134,7 @@ struct EventRowView: View {
                         .cornerRadius(10)
 
                         Button("Payments info") {
-                            gameViewModel.setCurrentMatch(matchId: match.id) // Set the current match before navigating
+                            gameViewModel.setCurrentMatch(matchId: match.id)
                             showingSplitPayment = true
                         }
                         .font(.subheadline)
@@ -125,12 +144,10 @@ struct EventRowView: View {
                         .cornerRadius(10)
                         .sheet(isPresented: $showingSplitPayment) {
                             SplitPayment()
-                                .environmentObject(gameViewModel) // Pass environment object to the sheet
-//                                .environmentObject(userViewModel)
                         }
 
                         Button("Edit Event") {
-                            gameViewModel.setCurrentMatch(matchId: match.id) // Set the current match before navigating
+                            gameViewModel.setCurrentMatch(matchId: match.id)
                             showingEditEvent = true
                         }
                         .font(.subheadline)
@@ -140,11 +157,9 @@ struct EventRowView: View {
                         .cornerRadius(10)
                         .sheet(isPresented: $showingEditEvent) {
                             EditEventView()
-                                .environmentObject(gameViewModel) // Pass environment object to the sheet
                         }
                     }
                 }
-
                 Divider()
             }
         }
@@ -156,51 +171,3 @@ struct EventRowView: View {
         return formatter
     }()
 }
-
-//#Preview{
-//    // Mock user for preview
-//    let mockUser = MyUser(
-//        id: "mockUser123",
-//        name: "Preview User",
-//        email: "preview@example.com",
-//        password: "password",
-//        experience: "Beginner"
-//    )
-//
-//    // UserViewModel setup for preview
-//    let userViewModel = UserViewModel()
-//    userViewModel.myUserData = mockUser
-//
-//    // Mock matches for preview
-//    let mockMatch1 = Match(
-//        id: UUID().uuidString,
-//        name: "Junior Badminton Tournament",
-//        description: "A competitive tournament for junior players.",
-//        date: Date(), // Current time for now
-//        courtCost: 100.0,
-//        players: [mockUser], // User is invited
-//        games: [],
-//        paidUserIds: [],
-//        location: "Weston Citraland"
-//    )
-//
-//    let mockMatch2 = Match(
-//        id: UUID().uuidString,
-//        name: "Evening Friendly Match",
-//        description: "Casual game with friends.",
-//        date: Calendar.current.date(byAdding: .hour, value: 1, to: Date())!, // Future time
-//        courtCost: 50.0,
-//        players: [], // User is not invited
-//        games: [],
-//        paidUserIds: [],
-//        location: "Galaxy Sports Center"
-//    )
-//
-//    // GameViewModel setup for preview
-//    let gameViewModel = GameViewModel(userViewModel: userViewModel)
-//    gameViewModel.matches = [mockMatch1, mockMatch2]
-//
-//    return EventInvitationView()
-//        .environmentObject(gameViewModel)
-//        .environmentObject(userViewModel)
-//}

@@ -1,9 +1,4 @@
-//
-//  GameViewModel.swift
-//  RakuApp
-//
-//  Created by Surya on 28/05/25.
-//
+// souiyaaa/rakuapp/RakuApp-b4efc2de3e01e479eee184089dffb9fa47c7af7d/RakuApp/ViewModel/GameViewModel.swift
 
 import FirebaseDatabase
 import Foundation
@@ -17,11 +12,19 @@ class GameViewModel: ObservableObject {
     init(userViewModel: UserViewModel) {
         self.userViewModel = userViewModel
         self.ref = Database.database().reference().child("matches")
-        fetchMatches()
+        // FIX: DO NOT fetch matches here. The user is not yet loaded.
+        // fetchMatches()
     }
 
     func fetchMatches() {
         let currentUserId = userViewModel.myUserData.id
+        
+        // FIX: Add a guard to prevent fetching if the user ID is not yet available.
+        guard !currentUserId.isEmpty else {
+            print("User ID not available yet. Skipping match fetch.")
+            return
+        }
+        
         ref.observe(.value) { snapshot in
             guard let value = snapshot.value as? [String: Any] else {
                 self.matches = []
@@ -53,6 +56,8 @@ class GameViewModel: ObservableObject {
         }
     }
     
+    // The rest of your GameViewModel code remains the same...
+    // addMatch, updateMatch, etc. are all correct.
     func setCurrentMatch(matchId: String) {
         if let match = matches.first(where: { $0.id == matchId }) {
             DispatchQueue.main.async {
@@ -70,7 +75,6 @@ class GameViewModel: ObservableObject {
         
         var updatedMatch = matches[index]
         
-        // Avoid adding duplicates
         for player in players {
             if !updatedMatch.players.contains(where: { $0.id == player.id }) {
                 updatedMatch.players.append(player)
@@ -81,17 +85,22 @@ class GameViewModel: ObservableObject {
         return true
     }
     
-
     func addMatch(
         name: String, description: String, date: Date, courtCost: Double,
         players: [MyUser], location: String
     ) -> Bool {
+        var finalPlayers = players
+        let currentUser = self.userViewModel.myUserData
+        if !finalPlayers.contains(where: { $0.id == currentUser.id }) {
+            finalPlayers.append(currentUser)
+        }
+
         let newMatch = Match(
             name: name,
             description: description,
             date: date,
             courtCost: courtCost,
-            players: players,
+            players: finalPlayers,
             games: [],
             paidUserIds: [],
             location: location
@@ -102,48 +111,68 @@ class GameViewModel: ObservableObject {
                 as? [String: Any]
         else {
             print("function failed to add match")
-           
             return false
-           
         }
 
         ref.child(newMatch.id).setValue(json)
+        
+        DispatchQueue.main.async {
+            self.matches.append(newMatch)
+        }
+        
         print(newMatch)
         print("function is done ")
         return true
-       
-    }
-
-    func addGame(to matchId: String, game: Game) {
-        guard let index = matches.firstIndex(where: { $0.id == matchId }) else {
-            return
-        }
-        matches[index].games.append(game)
-        updateMatch(matches[index])
     }
 
     func updateMatch(_ match: Match) {
-        guard let jsonData = try? JSONEncoder().encode(match),
-            let json = try? JSONSerialization.jsonObject(with: jsonData)
-                as? [String: Any]
-        else {
-            return
+            guard let jsonData = try? JSONEncoder().encode(match),
+                let json = try? JSONSerialization.jsonObject(with: jsonData)
+                    as? [String: Any]
+            else {
+                return
+            }
+            
+            ref.child(match.id).setValue(json)
+
+            DispatchQueue.main.async {
+                if let index = self.matches.firstIndex(where: { $0.id == match.id }) {
+                    self.matches[index] = match
+                    print("Local match array updated for match ID: \(match.id)")
+                }
+                
+                if self.currentMatch?.id == match.id {
+                    self.currentMatch = match
+                    print("Current match state updated.")
+                }
+            }
         }
-        ref.child(match.id).setValue(json)
-    }
 
     func deleteMatch(_ match: Match) {
         ref.child(match.id).removeValue()
     }
 
     func markPlayerAsPaid(matchId: String, userId: String) {
-        guard let index = matches.firstIndex(where: { $0.id == matchId }) else {
-            return
-        }
-        if !matches[index].paidUserIds.contains(userId) {
-            matches[index].paidUserIds.append(userId)
-            updateMatch(matches[index])
-        }
-    }
+          guard let matchIndex = matches.firstIndex(where: { $0.id == matchId }) else {
+              print("Error: Could not find match with ID \(matchId)")
+              return
+          }
+          
+          if var currentMatch = self.currentMatch, currentMatch.id == matchId {
+              if let paidIndex = currentMatch.paidUserIds.firstIndex(of: userId) {
+                  currentMatch.paidUserIds.remove(at: paidIndex)
+              } else {
+                  currentMatch.paidUserIds.append(userId)
+              }
+              self.currentMatch = currentMatch
+          }
 
+          if let paidIndexInMatches = matches[matchIndex].paidUserIds.firstIndex(of: userId) {
+              matches[matchIndex].paidUserIds.remove(at: paidIndexInMatches)
+          } else {
+              matches[matchIndex].paidUserIds.append(userId)
+          }
+          
+          updateMatch(matches[matchIndex])
+      }
 }
