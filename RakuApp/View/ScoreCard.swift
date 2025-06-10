@@ -11,14 +11,6 @@ struct ScoreCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Current Match")
-                    .font(.subheadline)
-                Spacer()
-                Text("More")
-                    .font(.subheadline)
-            }
-
-            HStack {
                 Spacer()
                 HStack(spacing: 32) {
                     VStack(alignment: .trailing) {

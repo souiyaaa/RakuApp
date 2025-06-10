@@ -1,10 +1,3 @@
-//
-//  SinglesView.swift
-//  RakuApp
-//
-//  Created by student on 03/06/25.
-//
-
 import SwiftUI
 
 struct SinglesView: View {
@@ -12,58 +5,65 @@ struct SinglesView: View {
     @State private var gameUpTo = 21
     @State private var maxScore = 30
 
+    @State private var startMatch = false
+    @State private var showFriendPicker = false
+    @StateObject private var userVM = UserViewModel()
+    @ObservedObject var matchState: MatchState
+
     var body: some View {
-        VStack(spacing: 20) {
-            // 🏸 코트: 2개는 빈 박스, 2개는 선수
-            VStack(spacing: 10) {
-                HStack(spacing: 20) {
-                    EmptyCourtBox()
-                    SinglePlayerView(name: "Player 1")
+        NavigationStack {
+            VStack(spacing: 20) {
+                Button("Choose Friends") {
+                    showFriendPicker = true
                 }
-                HStack(spacing: 20) {
-                    SinglePlayerView(name: "Player 2")
-                    EmptyCourtBox()
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(12)
+                .sheet(isPresented: $showFriendPicker) {
+                    NavigationView {
+                        MatchFriendView(userVM: userVM, selectedUsers: $matchState.selectedUsers)
+                    }
                 }
-            }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.gray.opacity(0.2))
-            .cornerRadius(12)
 
-            // 참가자 명단 (1:1 싱글용)
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Participants")
-                    .font(.headline)
-                HStack(spacing: 20) {
-                    SingleTeamBox(title: "Team 1", color: Color.blue.opacity(0.1))
-                    SingleTeamBox(title: "Team 2", color: Color.red.opacity(0.1))
+                // 참가자 명단
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Participants")
+                        .font(.headline)
+                    HStack(spacing: 20) {
+                        SingleTeamBox(title: "Team 1", color: Color.blue.opacity(0.1))
+                        SingleTeamBox(title: "Team 2", color: Color.red.opacity(0.1))
+                    }
                 }
-            }
-            .padding(.horizontal)
+                .padding(.horizontal)
 
-            // 설정
-            VStack(spacing: 10) {
-                SingleSettingRow(title: "Best of", value: $bestOf)
-                SingleSettingRow(title: "Game up to", value: $gameUpTo, highlighted: true)
-                SingleSettingRow(title: "Max Score", value: $maxScore)
-            }
-            .padding(.horizontal)
+                // 설정
+                VStack(spacing: 10) {
+                    SingleSettingRow(title: "Best of", value: $bestOf)
+                    SingleSettingRow(title: "Game up to", value: $gameUpTo, highlighted: true)
+                    SingleSettingRow(title: "Max Score", value: $maxScore)
+                }
+                .padding(.horizontal)
 
-            // 버튼
-            Button("Random Match Detail") {}
-                .foregroundColor(.blue)
-
-            Button(action: {}) {
-                Text("Start Match")
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
+                Text("Participants: \(matchState.selectedUsers.map { $0.name }.joined(separator: ", "))")
                     .padding()
-                    .background(Color.blue)
-                    .cornerRadius(12)
+
+                Button("Start Match") {
+                    matchState.matchType = .single
+                    startMatch = true
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue)
+                .cornerRadius(12)
+
+                NavigationLink(destination: ScoreboardView(matchState: matchState), isActive: $startMatch) {
+                    EmptyView()
+                }
             }
-            .padding(.horizontal)
+            .padding()
         }
-        .padding(.vertical)
     }
 }
 
@@ -155,6 +155,5 @@ struct SingleSettingRow: View {
 }
 
 #Preview {
-    SinglesView()
+    SinglesView(matchState: MatchState())
 }
-

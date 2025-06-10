@@ -1,37 +1,43 @@
-//
-//  MatchView.swift
-//  RakuApp
-//
-//  Created by Surya on 22/05/25.
-//
+// souiyaaa/rakuapp/RakuApp-b4efc2de3e01e479eee184089dffb9fa47c7af7d/RakuApp/View/MatchView.swift
+
 import SwiftUI
 
 struct MatchView: View {
     @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var gameVM: GameViewModel
     @EnvironmentObject var matchVM: MatchViewModel
 
+    @StateObject private var calendarVM = CalendarViewModel()
     @State var isAddEvent = false
+
+    private var filteredMatches: [Match] {
+        guard let selectedDate = calendarVM.selectedDay else {
+            return []
+        }
+        return gameVM.matches.filter { match in
+            Calendar.current.isDate(match.date, inSameDayAs: selectedDate)
+        }
+    }
 
     var body: some View {
         NavigationStack {
             VStack {
-                // Row pertama
+                // User info row...
                 HStack {
                     if let uiImage = authVM.userViewModel.myUserPicture {
-                           Image(uiImage: uiImage)
-                               .resizable()
-                               .scaledToFill()
-                               .frame(width: 50, height: 50)
-                               .clipShape(Circle())
-                       } else {
-                           Image(systemName: "person.crop.circle.fill") // fallback system image
-                               .resizable()
-                               .frame(width: 50, height: 50)
-                               .foregroundColor(.gray)
-                       }
-                    
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 50, height: 50)
+                            .clipShape(Circle())
+                    } else {
+                        Image(systemName: "person.crop.circle.fill")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .foregroundColor(.gray)
+                    }
                     VStack(alignment: .leading) {
-                        HStack {
+                        HStack{
                             Text(
                                 "\(authVM.userViewModel.myUserData.name.isEmpty ? "User" : authVM.userViewModel.myUserData.name) you are at"
                             )
@@ -39,7 +45,7 @@ struct MatchView: View {
                             .multilineTextAlignment(.leading)
                             Spacer()
                         }
-                        HStack {
+                        HStack{
                             Text(matchVM.userLocationDescription)
                                 .font(.headline)
                                 .multilineTextAlignment(.leading)
@@ -65,18 +71,19 @@ struct MatchView: View {
                 }
                 .padding()
 
-                HStack {
+                // Current match ScoreCard...
+                HStack{
                     Text("Current match")
                     Spacer()
-                    Button("More") {
-                        //more detail here
+                    Button("More"){
                     }
                     .foregroundColor(Color(hex: "253366"))
                     .font(.headline)
-
                 }
                 .padding(.horizontal, 20)
+                ScoreCard()
 
+                // Events section...
                 HStack {
                     Text("Events")
                         .font(.headline)
@@ -85,41 +92,14 @@ struct MatchView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
                 .padding(.bottom, 4)
-
-                HStack {
-                    Button(action: {
-                        // action here
-                    }) {
-                        Text("Aug >")
-                            .foregroundColor(Color(hex: "253366"))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.white)
-                            .cornerRadius(12)  // rounded corners
-                            .shadow(
-                                color: Color.black.opacity(0.1), radius: 4,
-                                x: 0, y: 2)  // gentle shadow
-                    }
-
-                    Spacer()
-
-                    Button(action: {
-                        isAddEvent = true
-                    }) {
-                        Text("Add Events")
-                            .foregroundColor(Color(hex: "253366"))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.white)
-                            .cornerRadius(12)  // rounded corners
-                            .shadow(
-                                color: Color.black.opacity(0.1), radius: 4,
-                                x: 0, y: 2)  // gentle shadow
-                    }
-                }
-                .padding(.horizontal, 16)
-
-                Spacer()
+                
+                CalendarView(viewModel: calendarVM)
+                
+                EventInvitationView(matches: filteredMatches, currentUser: authVM.userViewModel.myUserData)
+                
+                // REMOVED: The entire "Quick Match" button block is now gone from here.
+                
+                Spacer() // Add a spacer to push content up if the list is short
             }
             .background(Color(hex: "F7F7F7"))
             .navigationTitle("Matches")
@@ -130,21 +110,10 @@ struct MatchView: View {
                 }
             }
         }
-        .onAppear {
-            print(
-                "DEBUG (onAppear): Loaded user → \(authVM.userViewModel.myUserData)"
-            )
-            authVM.checkUserSession()
+        .onChange(of: authVM.userViewModel.myUserData.id) { newUserId in
+            if !newUserId.isEmpty {
+                gameVM.fetchMatches()
+            }
         }
     }
-}
-
-#Preview {
-    let userVM = UserViewModel()
-    let authVM = AuthViewModel(userViewModel: userVM)
-    let matchVM = MatchViewModel()
-
-    return MatchView()
-        .environmentObject(authVM)
-        .environmentObject(matchVM)
 }

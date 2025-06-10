@@ -36,7 +36,7 @@ struct WeeklySumView: View {
                                 Text("Exercise time total")
                                     .font(.caption)
                                     .foregroundStyle(.gray)
-                                Text("\(Int(activityVM.exerciseTime * 60)) minutes")
+                                Text("\(Int(activityVM.exerciseTime * 60)) minutes") //formatnya detik
                                 .font(.body)
                                 .bold()
                             }
@@ -46,7 +46,7 @@ struct WeeklySumView: View {
                                 Text("Total standing time")
                                     .font(.caption)
                                     .foregroundStyle(.gray)
-                                Text("\(Int(activityVM.standingTime * 60)) minutes")
+                                Text("\(Int(activityVM.standingTime * 60)) minutes") //formatnya detik harus dirubah
 
                                 .font(.body)
                                 .bold()
