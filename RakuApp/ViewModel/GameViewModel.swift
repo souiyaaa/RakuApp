@@ -49,19 +49,27 @@ class GameViewModel: ObservableObject {
             
             let filteredMatches = value.compactMap { (key, matchData) -> Match? in
                 guard let matchDict = matchData as? [String: Any],
-                      let jsonData = try? JSONSerialization.data(withJSONObject: matchDict),
-                      let match = try? JSONDecoder().decode(Match.self, from: jsonData)
-                else {
+                      let jsonData = try? JSONSerialization.data(withJSONObject: matchDict) else {
+                    print("Failed to serialize matchDict for matchId: \(key)")
                     return nil
                 }
 
-                let playerIds = match.players.map { $0.id }
-                if playerIds.contains(currentUserId) {
-                    return match
-                } else {
+                do {
+                    let match = try JSONDecoder().decode(Match.self, from: jsonData)
+                    let playerIds = match.players.map { $0.id }
+                    if playerIds.contains(currentUserId) {
+                        print("Match \(key) will be included")
+                        return match
+                    } else {
+                        print("Match \(key) does not contain currentUserId")
+                        return nil
+                    }
+                } catch {
+                    print("Failed to decode Match for matchId \(key): \(error)")
                     return nil
                 }
             }
+
 
             DispatchQueue.main.async {
                 self.matches = filteredMatches
