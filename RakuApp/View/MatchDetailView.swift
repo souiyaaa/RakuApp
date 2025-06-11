@@ -1,23 +1,31 @@
-//
-//  MatchDetailView.swift
-//  RakuApp
-//
-//  Created by student on 03/06/25.
-//
-
 import SwiftUI
+import FirebaseAuth
+import SwiftData
 
 struct MatchDetailView: View {
+    @ObservedObject var matchState: MatchState
+    @State private var currentTime: String = ""
+    @State private var selectedMatch: CurrentMatch? = nil
+    @State private var navigateToScoreboard = false
+    
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    @Environment(\.modelContext) private var context
+    @State private var matches: [CurrentMatch] = []
+
+    init(matchState: MatchState) {
+        self.matchState = matchState
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    // Header
                     VStack(spacing: 4) {
-                        Text("YOU ARE")
+                        Text("QUICK")
                             .font(.system(size: 60, weight: .bold))
                             .foregroundColor(Color(red: 0.0, green: 0.2, blue: 0.5))
-                        Text("INVITED")
+                        Text("MATCH")
                             .font(.title2)
                             .italic()
                             .foregroundColor(.blue)
@@ -27,150 +35,91 @@ struct MatchDetailView: View {
                     .background(
                         LinearGradient(
                             gradient: Gradient(colors: [
-                                .red.opacity(0.2),
-                                .orange.opacity(0.2),
-                                .yellow.opacity(0.2),
-                                .green.opacity(0.2),
-                                .blue.opacity(0.2),
-                                .purple.opacity(0.2)
+                                .red.opacity(0.2), .orange.opacity(0.2), .yellow.opacity(0.2),
+                                .green.opacity(0.2), .blue.opacity(0.2), .purple.opacity(0.2)
                             ]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
-                    .ignoresSafeArea(edges: .horizontal)
 
-                    // Match Info
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Saturday Morning Match")
-                            .font(.title2).bold()
-                        Text("Central Park Court 3")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-
-                        HStack(spacing: -10) {
-                            ForEach(0..<3, id: \.self) { index in
-                                Circle()
-                                    .fill(Color.gray.opacity(0.4))
-                                    .frame(width: 30, height: 30)
-                                    .overlay(Text("P\(index + 1)").foregroundColor(.white))
-                            }
-                            Text("+2")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                        Text("5 Participants")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    // Actions
                     VStack(alignment: .leading, spacing: 8) {
                         Text("What do you want to do?")
                             .font(.headline)
-                            .foregroundColor(.primary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
                         HStack(spacing: 16) {
                             ActionButtonView(color: .green, icon: "sportscourt", label: "Be Referee")
-
-                            NavigationLink(destination: SinglesView()) {
+                            NavigationLink(destination: SinglesView(matchState: matchState)) {
                                 ActionButtonView(color: .blue, icon: "person", label: "Singles")
                             }
-
-                            NavigationLink(destination: DoublesView()) {
+                            NavigationLink(destination: DoublesView(matchState: matchState)) {
                                 ActionButtonView(color: .orange, icon: "person.2", label: "Doubles")
                             }
                         }
                     }
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                    // Current Match
-                    VStack(spacing: 8) {
-                        Text("Current Match")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text("Alice")
-                                Text("Bob")
-                            }
-                            .font(.caption)
-                            .foregroundColor(.white)
-
-                            Spacer()
-
-                            Text("15")
-                                .font(.title)
-                                .bold()
-                                .foregroundColor(.white)
-
-                            Spacer()
-
-                            VStack {
-                                Text("12:10")
-                                Text("Weston")
-                            }
-                            .font(.caption)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.white)
-
-                            Spacer()
-
-                            Text("13")
-                                .font(.title)
-                                .bold()
-                                .foregroundColor(.white)
-
-                            Spacer()
-
-                            VStack(alignment: .trailing) {
-                                Text("Charlie")
-                                Text("Diana")
-                            }
-                            .font(.caption)
-                            .foregroundColor(.white)
-                        }
-                        .padding()
-                        .background(Color(red: 0.0, green: 0.2, blue: 0.5))
-                        .cornerRadius(12)
-                    }
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    // History
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("History")
+                        Text("Match History")
                             .font(.headline)
 
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text("Saturday Morning Match")
-                                    .font(.subheadline).bold()
-                                Text("Double - 3 Set")
-                                    .font(.caption)
+                        ForEach(matches) { match in
+                            Button {
+                                selectedMatch = match
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    navigateToScoreboard = true
+                                }
+                            } label: {
+                                MatchCardView(match: match, currentTime: currentTime)
                             }
-                            Spacer()
-                            Text("5 Participants")
-                                .font(.caption)
-                                .foregroundColor(.gray)
                         }
-                        .padding()
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(10)
+
+                        NavigationLink(
+                            isActive: $navigateToScoreboard,
+                            destination: {
+                                Group {
+                                    if let match = selectedMatch {
+                                        ScoreboardView(matchState: MatchState(currentMatch: match))
+                                    } else {
+                                        EmptyView()
+                                    }
+                                }
+                            },
+                            label: {
+                                EmptyView()
+                            }
+                        )
+                        .hidden()
                     }
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding()
             }
             .navigationTitle("Current Match")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                loadMatches()
+            }
+            .onReceive(timer) { _ in
+                let formatter = DateFormatter()
+                formatter.dateFormat = "HH:mm"
+                currentTime = formatter.string(from: Date())
+            }
+        }
+    }
+
+    func loadMatches() {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("❌ No user logged in")
+            return
+        }
+        let descriptor = FetchDescriptor<CurrentMatch>(
+            predicate: #Predicate { $0.userID == uid },
+            sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+        )
+        do {
+            matches = try context.fetch(descriptor)
+        } catch {
+            print("❌ Failed to fetch matches: \(error.localizedDescription)")
         }
     }
 }
@@ -199,6 +148,92 @@ struct ActionButtonView: View {
     }
 }
 
-#Preview {
-    MatchDetailView()
+struct MatchCardView: View {
+    let match: CurrentMatch
+    let currentTime: String
+
+    var body: some View {
+        HStack {
+            if match.playerNames.count == 2 {
+                Text(match.playerNames[0])
+                    .font(.caption)
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                Text("\(match.blueScore)")
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                Text(currentTime)
+                    .font(.caption)
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                Text("\(match.redScore)")
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                Text(match.playerNames[1])
+                    .font(.caption)
+                    .foregroundColor(.white)
+
+            } else {
+                VStack(alignment: .leading) {
+                    ForEach(match.playerNames.prefix(2), id: \.self) { name in
+                        Text(name)
+                            .font(.caption)
+                            .foregroundColor(.white)
+                    }
+                }
+
+                Spacer()
+
+                Text("\(match.blueScore)")
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                Text(currentTime)
+                    .font(.caption)
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                Text("\(match.redScore)")
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                VStack(alignment: .trailing) {
+                    ForEach(match.playerNames.dropFirst(2), id: \.self) { name in
+                        Text(name)
+                            .font(.caption)
+                            .foregroundColor(.white)
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color(red: 0.0, green: 0.2, blue: 0.5))
+        .cornerRadius(12)
+    }
 }
+
+#Preview {
+    let container = try! ModelContainer(for: CurrentMatch.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+    return MatchDetailView(matchState: MatchState())
+        .modelContainer(container)
+}
+

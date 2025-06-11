@@ -1,30 +1,33 @@
-//
-//  CalendarViewModel.swift
-//  RakuApp
-//
-//  Created by student on 27/05/25.
-//
+// souiyaaa/rakuapp/RakuApp-b4efc2de3e01e479eee184089dffb9fa47c7af7d/RakuApp/ViewModel/CalendarViewModel.swift
 
 import Foundation
 import SwiftUI
 
 class CalendarViewModel: ObservableObject {
     @Published var selectedMonth: Int
+    @Published var selectedYear: Int
     @Published var selectedDay: Date?
     @Published var daysInMonth: [CalendarModel] = []
 
     private let calendar = Calendar.current
+    
+    var currentYear: Int {
+        calendar.component(.year, from: Date())
+    }
 
     init() {
-        self.selectedMonth = calendar.component(.month, from: Date())
+        let now = Date()
+        self.selectedMonth = calendar.component(.month, from: now)
+        self.selectedYear = calendar.component(.year, from: now)
+        self.selectedDay = now
         updateDays()
     }
 
     func updateDays() {
         var components = DateComponents()
         components.month = selectedMonth
+        components.year = selectedYear
         components.day = 1
-        components.year = calendar.component(.year, from: Date()) // Tambahkan tahun agar pasti benar
 
         guard let startOfMonth = calendar.date(from: components),
               let range = calendar.range(of: .day, in: .month, for: startOfMonth) else {
@@ -41,7 +44,5 @@ class CalendarViewModel: ObservableObject {
             }
             return nil
         }
-
-        selectedDay = nil
     }
 }

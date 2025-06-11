@@ -1,18 +1,11 @@
-//
-//  ScoreboardView.swift
-//  RakuApp
-//
-//  Created by student on 03/06/25.
-//
-
 import SwiftUI
+import SwiftData
 
 struct ScoreboardView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.modelContext) private var context
+    @ObservedObject var matchState: MatchState
 
-    @State private var blueScore = 0
-    @State private var redScore = 0
-    @State private var activePlayer = "Player 1"
     @State private var setNumber = 1
     @State private var gameOver = false
     @State private var winnerColor: Color? = nil
@@ -20,135 +13,107 @@ struct ScoreboardView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // 전체 내용 (회전될 HStack)
                 HStack(spacing: 0) {
-                    // BLUE TEAM
-                    ZStack(alignment: .topLeading) {
-                        Color.blue
-                        VStack {
-                            teamBox(color: .blue, name: "Player 1", name2: "Player 1")
-                            Spacer()
-                            Text("\(blueScore)")
-                                .font(.system(size: 120, weight: .bold))
-                                .foregroundColor(.white)
-                            HStack(spacing: 40) {
-                                Button("−") {
-                                    if blueScore > 0 { blueScore -= 1 }
-                                }
-                                .font(.largeTitle)
-                                Button("+") {
-                                    increaseScore(team: .blue)
-                                }
-                                .font(.largeTitle)
-                            }
-                            .foregroundColor(.white)
-                            Spacer()
-                        }
-                        .padding()
-                    }
-                    .onTapGesture {
-                        increaseScore(team: .blue)
-                    }
-
-                    // RED TEAM
-                    ZStack(alignment: .topTrailing) {
-                        Color.red
-                        VStack {
-                            teamBox(color: .red, name: "Player 2", name2: "Player 2")
-                            Spacer()
-                            Text("\(redScore)")
-                                .font(.system(size: 120, weight: .bold))
-                                .foregroundColor(.white)
-                            HStack(spacing: 40) {
-                                Button("−") {
-                                    if redScore > 0 { redScore -= 1 }
-                                }
-                                .font(.largeTitle)
-                                Button("+") {
-                                    increaseScore(team: .red)
-                                }
-                                .font(.largeTitle)
-                            }
-                            .foregroundColor(.white)
-                            Spacer()
-                        }
-                        .padding()
-                    }
-                    .onTapGesture {
-                        increaseScore(team: .red)
-                    }
+                    scorePanel(isBlue: true)
+                    scorePanel(isBlue: false)
                 }
-                .overlay(alignment: .top) {
-                    HStack {
-                        Button("Back") {
-                            dismiss()
-                        }
-                        .foregroundColor(.blue)
-                        Spacer()
-                        Text("Scoreboard")
-                            .font(.headline)
-                        Spacer()
-                        Text("SET \(setNumber)")
-                            .font(.headline)
-                    }
-                    .padding()
-                    .background(.white.opacity(0.8))
-                }
-                .overlay(alignment: .bottom) {
-                    if !gameOver {
-                        Text("Active Player: \(activePlayer)")
-                            .padding()
-                            .background(Color.white)
-                            .cornerRadius(16)
-                            .shadow(radius: 4)
-                            .padding(.bottom, 8)
-                    } else if let winner = winnerColor {
-                        Text("\(winner == .blue ? "Blue" : "Red") Wins!")
-                            .font(.title)
-                            .foregroundColor(winner == .blue ? .blue : .red)
-                            .padding()
-                            .background(Color.white)
-                            .cornerRadius(16)
-                            .shadow(radius: 4)
-                            .padding(.bottom, 8)
-                    }
-                }
+                .overlay(topBar, alignment: .top)
+                .overlay(bottomBar, alignment: .bottom)
                 .rotationEffect(.degrees(90))
                 .frame(width: geometry.size.height, height: geometry.size.width)
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 1.77)
             }
             .ignoresSafeArea()
-            .contentShape(Rectangle())
             .onTapGesture {
                 if gameOver {
-                    dismiss()
+                    presentationMode.wrappedValue.dismiss()
                 }
             }
         }
     }
 
-    enum TeamColor {
-        case blue, red
+    func scorePanel(isBlue: Bool) -> some View {
+        let color: Color = isBlue ? .blue : .red
+        let score: Int = isBlue ? matchState.blueScore : matchState.redScore
+        let users = matchState.selectedUsers
+        let playerNames: [String] = {
+            switch matchState.matchType {
+            case .single:
+                guard users.count == 2 else {
+                    return isBlue ? ["Blue"] : ["Red"]
+                }
+                return isBlue ? [users[0].name] : [users[1].name]
+            case .doubles:
+                guard users.count == 4 else {
+                    return isBlue ? ["Team A1", "Team A2"] : ["Team B1", "Team B2"]
+                }
+                return isBlue ? [users[0].name, users[1].name] : [users[2].name, users[3].name]
+            }
+        }()
+
+        return ZStack(alignment: isBlue ? .topLeading : .topTrailing) {
+            color
+            VStack {
+                teamBox(color: color, names: playerNames)
+                Spacer()
+                Text("\(score)")
+                    .font(.system(size: 120, weight: .bold))
+                    .foregroundColor(.white)
+                HStack(spacing: 40) {
+                    Button("−") {
+                        if isBlue {
+                            matchState.blueScore = max(0, matchState.blueScore - 1)
+                        } else {
+                            matchState.redScore = max(0, matchState.redScore - 1)
+                        }
+                        saveScore()
+                    }
+                    .font(.largeTitle)
+
+                    Button("+") {
+                        increaseScore(team: isBlue ? .blue : .red)
+                    }
+                    .font(.largeTitle)
+                }
+                .foregroundColor(.white)
+                Spacer()
+            }
+            .padding()
+        }
+        .onTapGesture {
+            increaseScore(team: isBlue ? .blue : .red)
+        }
     }
+
+    enum TeamColor { case blue, red }
 
     func increaseScore(team: TeamColor) {
         guard !gameOver else { return }
-
         switch team {
-        case .blue:
-            blueScore += 1
-        case .red:
-            redScore += 1
+        case .blue: matchState.blueScore += 1
+        case .red:  matchState.redScore += 1
         }
-
+        saveScore()
         checkGameOver()
     }
 
+    func saveScore() {
+        if let currentMatch = matchState.currentMatch {
+            currentMatch.blueScore = matchState.blueScore
+            currentMatch.redScore = matchState.redScore
+            try? context.save()
+        }
+    }
+
     func checkGameOver() {
-        if (blueScore >= 21 || redScore >= 21) {
-            if abs(blueScore - redScore) >= 2 && max(blueScore, redScore) <= 29 {
+        let gameUpTo = matchState.gameUpTo
+        let maxScore = matchState.maxScore
+        let diff = abs(matchState.blueScore - matchState.redScore)
+        let maxReached = max(matchState.blueScore, matchState.redScore)
+        if maxReached >= gameUpTo {
+            if diff >= 2 && maxReached < maxScore {
                 endGame()
-            } else if blueScore == 30 || redScore == 30 {
+            } else if maxReached == maxScore {
                 endGame()
             }
         }
@@ -156,19 +121,19 @@ struct ScoreboardView: View {
 
     func endGame() {
         gameOver = true
-        winnerColor = blueScore > redScore ? .blue : .red
+        winnerColor = matchState.blueScore > matchState.redScore ? .blue : .red
     }
 
     @ViewBuilder
-    func teamBox(color: Color, name: String, name2: String) -> some View {
+    func teamBox(color: Color, names: [String]) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Image(systemName: "person.circle.fill")
-                Text(name)
-            }
-            HStack {
-                Image(systemName: "person.circle.fill")
-                Text(name2)
+            ForEach(names, id: \.self) { name in
+                HStack {
+                    Image(systemName: "person.circle.fill")
+                    Text(name)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
             }
         }
         .padding(8)
@@ -177,9 +142,49 @@ struct ScoreboardView: View {
         .cornerRadius(12)
         .foregroundColor(.white)
     }
+
+    var topBar: some View {
+        HStack {
+            Button("Back") {
+                saveScore()
+                presentationMode.wrappedValue.dismiss()
+            }
+            .foregroundColor(.blue)
+            Spacer()
+            Text("Scoreboard").font(.headline)
+            Spacer()
+            Text("SET \(setNumber)").font(.headline)
+        }
+        .padding()
+        .background(.white.opacity(0.8))
+    }
+
+    var bottomBar: some View {
+        if gameOver {
+            return AnyView(
+                Text("\(winnerColor == .blue ? "Blue" : "Red") Wins!")
+                    .font(.title)
+                    .foregroundColor(winnerColor ?? .black)
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(16)
+                    .shadow(radius: 4)
+                    .padding(.bottom, 8)
+            )
+        } else {
+            return AnyView(
+                Text("Tap team area to score")
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(16)
+                    .shadow(radius: 4)
+                    .padding(.bottom, 8)
+            )
+        }
+    }
 }
 
 #Preview {
-    ScoreboardView()
+    ScoreboardView(matchState: MatchState())
 }
 

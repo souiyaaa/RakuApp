@@ -16,10 +16,12 @@ struct LearnCard: View {
         VStack(alignment: .leading, spacing: 2) {
             ZStack(alignment: .topTrailing) {
                 Button(action: {
+                    //buat konekin ke id youtubenya
                     if let url = URL(string: "https://www.youtube.com/watch?v=\(videoID)") {
                         UIApplication.shared.open(url)
                     }
                 }) {
+                    //buat ambil image thumbnail dari id youtube nya
                     AsyncImage(url: URL(string: "https://img.youtube.com/vi/\(videoID)/hqdefault.jpg")) { image in
                         image
                             .resizable()

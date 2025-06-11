@@ -1,70 +1,72 @@
-//
-//  DoublesView.swift
-//  RakuApp
-//
-//  Created by student on 03/06/25.
-//
-
 import SwiftUI
+import SwiftData
 
 struct DoublesView: View {
-    @State private var bestOf = 3
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var context
     @State private var gameUpTo = 21
     @State private var maxScore = 30
+    @State private var showFriendPicker = false
+    @StateObject private var userVM = UserViewModel()
+    @ObservedObject var matchState: MatchState
 
-    @State private var startMatch = false
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                VStack(spacing: 10) {
-                    ForEach(0..<2) { _ in
-                        HStack(spacing: 20) {
-                            ForEach(0..<2) { _ in
-                                PlayerView(name: "Player")
-                            }
-                        }
-                    }
+                Button("Choose Friends") {
+                    showFriendPicker = true
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(12)
+                .sheet(isPresented: $showFriendPicker) {
+                    NavigationView {
+                        MatchFriendView(
+                            userVM: userVM,
+                            selectedUsers: $matchState.selectedUsers,
+                            maxSelection: 4
+                        )
+                    }
+                }
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Participants").font(.headline)
-                    HStack(spacing: 20) {
-                        TeamBox(title1: "Team 1 left", title2: "Team 1 Right", color: Color.blue.opacity(0.1))
-                        TeamBox(title1: "Team 2 left", title2: "Team 2 Right", color: Color.red.opacity(0.1))
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 2)) {
+                        ForEach(matchState.selectedUsers.prefix(4), id: \ .id) { user in
+                            PlayerView(name: user.name)
+                        }
                     }
                 }
                 .padding(.horizontal)
-                
-                // 설정
+
                 VStack(spacing: 10) {
-                    SingleSettingRow(title: "Best of", value: $bestOf)
                     SingleSettingRow(title: "Game up to", value: $gameUpTo, highlighted: true)
                     SingleSettingRow(title: "Max Score", value: $maxScore)
                 }
                 .padding(.horizontal)
 
-                Button("Random Match Detail") {}
-                    .foregroundColor(.blue)
-
-                NavigationLink(destination: ScoreboardView()) {
-                    Text("Start Match")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(12)
+                Button("Start Match") {
+                    matchState.matchType = .doubles
+                    matchState.blueScore = 0
+                    matchState.redScore = 0
+                    matchState.saveCurrentMatch(gameUpTo: gameUpTo, maxScore: maxScore)
+                    matchState.saveToLocalMatchHistory(context: context)
+                    dismiss()
                 }
-                .padding(.horizontal)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue)
+                .cornerRadius(12)
             }
-            .padding(.vertical)
+            .padding()
+            .onAppear {
+                matchState.selectedUsers = []
+            }
         }
     }
 }
-
 struct PlayerView: View {
     var name: String
     var body: some View {
@@ -94,7 +96,6 @@ struct TeamBox: View {
         .frame(width: 150)
     }
 }
-
 
 struct SettingControlRow: View {
     var title: String
@@ -140,5 +141,5 @@ struct SettingControlRow: View {
 }
 
 #Preview {
-    DoublesView()
+    DoublesView(matchState: MatchState())
 }
