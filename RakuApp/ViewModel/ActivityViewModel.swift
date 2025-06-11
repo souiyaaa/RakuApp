@@ -10,8 +10,8 @@ import HealthKit
 
 @MainActor
 class ActivityViewModel: ObservableObject {
-    private let healthKitManager = HealthKitManager()
-    private let authViewModel: AuthViewModel
+    public let healthKitManager = HealthKitManager()
+    public let authViewModel: AuthViewModel
     
     @Published var calories: Double = 0.0
     @Published var standingTime: Double = 0.0

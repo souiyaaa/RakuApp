@@ -7,7 +7,7 @@
 
 import HealthKit
 
-class HealthKitManager {
+public class HealthKitManager {
     let healthStore = HKHealthStore()
 
     func requestAuthorization() async throws -> Bool{
