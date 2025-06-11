@@ -61,7 +61,7 @@ struct EventRowView: View {
                                 .multilineTextAlignment(.center)
 
                             // ADDED: The NavigationLink for "Quick Match" is now here
-                            NavigationLink(destination: MatchDetailView()) {
+                            NavigationLink(destination: MatchDetailView(matchState: MatchState())) {
                                 HStack {
                                     Image(systemName: "bolt.fill")
                                     Text("Quick Match")

@@ -15,3 +15,12 @@ struct MyUser: Identifiable, Hashable, Codable{
     var experience: String = "beginner"
 }
 
+extension MyUser {
+    init(name: String) {
+        self.id = UUID().uuidString
+        self.name = name
+        self.email = ""
+        self.password = ""
+        self.experience = "beginner"
+    }
+}
