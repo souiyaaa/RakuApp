@@ -4,78 +4,62 @@ import FirebaseDatabase
 import Foundation
 
 class GameViewModel: ObservableObject {
-    @Published var matches = [Match]()
+//    @Published var matches = [Match]()
     private var ref: DatabaseReference
     @Published var userViewModel: UserViewModel
     @Published var currentMatch: Match?
+    @Published var matches: [Match] = []
+
 
     init(userViewModel: UserViewModel) {
         self.userViewModel = userViewModel
-        self.ref = Database.database().reference().child("matches")
-        // FIX: DO NOT fetch matches here. The user is not yet loaded.
-        // fetchMatches()
+        self.ref = Database.database().reference().child("Matches")
+        fetchMatches(for: nil)
     }
 
-    func fetchMatches(for selectedDate: Date?) {
-        let currentUserId = userViewModel.myUserData.id
-        
-        guard !currentUserId.isEmpty else {
-            print("User ID not available yet. Skipping match fetch.")
-            return
-        }
-        
-        var query = ref.queryOrdered(byChild: "date")
-        
-        if let selectedDate = selectedDate {
-            // Set startOfDay and endOfDay timestamps (in seconds since 1970)
-            let startOfDayDate = Calendar.current.startOfDay(for: selectedDate)
-            let endOfDayDate = Calendar.current.date(byAdding: .day, value: 1, to: startOfDayDate)!
 
-            let startOfDay = startOfDayDate.timeIntervalSince1970
-            let endOfDay = endOfDayDate.timeIntervalSince1970
-
-
-            
-            print("Fetching matches between \(startOfDay) and \(endOfDay)")
-            
-            query = query.queryStarting(atValue: startOfDay).queryEnding(atValue: endOfDay)
-        }
-        
-        query.observeSingleEvent(of: .value) { snapshot in
-            guard let value = snapshot.value as? [String: Any] else {
-                self.matches = []
-                return
-            }
-            
-            let filteredMatches = value.compactMap { (key, matchData) -> Match? in
-                guard let matchDict = matchData as? [String: Any],
-                      let jsonData = try? JSONSerialization.data(withJSONObject: matchDict) else {
-                    print("Failed to serialize matchDict for matchId: \(key)")
-                    return nil
+    func fetchMatches(for date: Date?) {
+        ref.observeSingleEvent(of: .value) { snapshot in
+                guard let value = snapshot.value as? [String: Any] else {
+                    DispatchQueue.main.async {
+                        self.matches = []
+                    }
+                    print("❌ Matches snapshot is empty or invalid.")
+                    return
                 }
 
-                do {
-                    let match = try JSONDecoder().decode(Match.self, from: jsonData)
-                    let playerIds = match.players.map { $0.id }
-                    if playerIds.contains(currentUserId) {
-                        print("Match \(key) will be included")
-                        return match
-                    } else {
-                        print("Match \(key) does not contain currentUserId")
+                let loadedMatches = value.compactMap { (key, rawData) -> Match? in
+                    guard let matchDict = rawData as? [String: Any],
+                          let jsonData = try? JSONSerialization.data(withJSONObject: matchDict),
+                          let match = try? JSONDecoder().decode(Match.self, from: jsonData)
+                    else {
+                        print("❌ Failed to decode match with key: \(key)")
                         return nil
                     }
-                } catch {
-                    print("Failed to decode Match for matchId \(key): \(error)")
-                    return nil
+                    return match
+                }
+
+                // Filter matches by selected date if provided
+                if let selectedDate = date {
+                    let calendar = Calendar.current
+                    let filteredMatches = loadedMatches.filter {
+                        calendar.isDate($0.date, inSameDayAs: selectedDate)
+                    }
+
+                    DispatchQueue.main.async {
+                        self.matches = filteredMatches
+                        print("✅ Loaded \(filteredMatches.count) matches for selected date.")
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.matches = loadedMatches
+                        print("✅ Loaded all \(loadedMatches.count) matches.")
+                    }
                 }
             }
-
-
-            DispatchQueue.main.async {
-                self.matches = filteredMatches
-            }
         }
-    }
+    
+
 
     
     // The rest of your GameViewModel code remains the same...
