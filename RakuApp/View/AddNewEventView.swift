@@ -6,30 +6,32 @@
 //
 
 import SwiftUI
-
 struct AddNewEventView: View {
 
     @State private var showDatePicker = false
     @State private var showTimePicker = false
 
-    //binder
+    // binder
     @Binding var isAddEvent: Bool
-    
 
-    //state variable that will bind to other page
+    // state variables
     @State var name: String = ""
     @State var description: String = ""
     @State var date: Date = Date()
     @State var courtCost: Double = 43000
     @State var isChooseFriend: Bool = false
-    
+
+    // Computed property to validate form
+    var isFormValid: Bool {
+        !name.isEmpty && !description.isEmpty && courtCost > 0
+    }
 
     var body: some View {
         VStack {
             ProgressView(value: 0.33)
-
                 .tint(Color(hex: "1F41BA"))
 
+            // Name
             HStack {
                 Text("Name your event")
                     .font(.headline)
@@ -43,14 +45,8 @@ struct AddNewEventView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color(hex: "D1D1D1"), lineWidth: 1)
                 )
-                .onChange(of: name) {
-                    if !name.isEmpty && !description.isEmpty && courtCost <= 0 {
-                        isChooseFriend = false
-                    } else {
-                      
-                    }
-                }
 
+            // Description
             HStack {
                 Text("Describe your event")
                     .font(.headline)
@@ -64,14 +60,8 @@ struct AddNewEventView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color(hex: "D1D1D1"), lineWidth: 1)
                 )
-                .onChange(of: description) {
-                    if !name.isEmpty && !description.isEmpty && courtCost <= 0 {
-                        isChooseFriend = false
-                    } else {
-                       
-                    }
-                }
 
+            // Date of Event
             HStack {
                 Text("Date of event")
                     .font(.headline)
@@ -84,32 +74,28 @@ struct AddNewEventView: View {
                     date = Date()
                     showDatePicker = false
                 }) {
-                    Text("Today ")
+                    Text("Today")
                         .foregroundColor(Color(hex: "253366"))
                         .padding(.horizontal, 32)
                         .padding(.vertical, 8)
                         .background(Color.white)
-                        .cornerRadius(12)  // rounded corners
-                        .shadow(
-                            color: Color.black.opacity(0.1), radius: 4, x: 0,
-                            y: 2)  // gentle shadow
+                        .cornerRadius(12)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
 
                 Spacer()
 
                 Button(action: {
-                    date = Date(timeInterval: 86400, since: Date())
+                    date = Date(timeIntervalSinceNow: 86400)
                     showDatePicker = false
                 }) {
-                    Text("Tomorrow ")
+                    Text("Tomorrow")
                         .foregroundColor(Color(hex: "253366"))
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .background(Color.white)
-                        .cornerRadius(12)  // rounded corners
-                        .shadow(
-                            color: Color.black.opacity(0.1), radius: 4, x: 0,
-                            y: 2)  // gentle shadow
+                        .cornerRadius(12)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
 
                 Spacer()
@@ -117,17 +103,16 @@ struct AddNewEventView: View {
                 Button(action: {
                     showDatePicker.toggle()
                 }) {
-                    Text("Choose Date ")
+                    Text("Choose Date")
                         .foregroundColor(Color(hex: "253366"))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .background(Color.white)
-                        .cornerRadius(12)  // rounded corners
-                        .shadow(
-                            color: Color.black.opacity(0.1), radius: 4, x: 0,
-                            y: 2)  // gentle shadow
+                        .cornerRadius(12)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
             }
+
             if showDatePicker {
                 DatePicker(
                     "Select Date", selection: $date, displayedComponents: .date
@@ -140,7 +125,7 @@ struct AddNewEventView: View {
                 .padding(.top, 12)
             }
 
-            //show time
+            // Time Picker
             HStack {
                 Text("Choose your time")
                     .font(.headline)
@@ -158,9 +143,7 @@ struct AddNewEventView: View {
                         .padding(.vertical, 8)
                         .background(Color.white)
                         .cornerRadius(12)
-                        .shadow(
-                            color: Color.black.opacity(0.1), radius: 4, x: 0,
-                            y: 2)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
             }
             .padding(.top, 12)
@@ -179,14 +162,14 @@ struct AddNewEventView: View {
                 .padding(.top, 12)
             }
 
-            // Show current date and time nicely formatted:
             Text(
                 "Selected: \(date.formatted(date: .abbreviated, time: .shortened))"
             )
             .font(.subheadline)
             .foregroundColor(.gray)
             .padding(.top, 8)
-            
+
+            // Court Cost
             HStack {
                 Text("Cost of Court")
                     .font(.headline)
@@ -205,31 +188,23 @@ struct AddNewEventView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(Color(hex: "D1D1D1"), lineWidth: 1)
             )
-            .onChange(of: courtCost) {
-                if !name.isEmpty && !description.isEmpty && courtCost > 0 {
-                    isChooseFriend = false
-                } else {
-                   
-                }
-            }
-            
+
             Spacer()
-            Button(
-                action: {
-                    isChooseFriend = true
-                    }
-            ) {
+
+            // Save Detail button (only enabled when valid)
+            Button(action: {
+                isChooseFriend = true
+            }) {
                 Text("Save Detail")
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, minHeight: 50)
-                    .background(Color(hex: "1F41BA"))
+                    .background(isFormValid ? Color(hex: "1F41BA") : Color.gray)
                     .cornerRadius(10)
                     .font(.headline)
             }
             .frame(width: 361, height: 50)
             .padding(.bottom, 8)
-            
-            
+            .disabled(!isFormValid)
         }
         .padding(.horizontal, 12)
         .background(Color(hex: "F7F7F7"))
@@ -237,12 +212,15 @@ struct AddNewEventView: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $isChooseFriend) {
             NavigationStack {
-                AddFriendView(isAddEvent: $isAddEvent, isChooseFriend: $isChooseFriend, name:$name, description: $description, date: $date, courtCost: $courtCost)
+                AddFriendView(
+                    isAddEvent: $isAddEvent,
+                    isChooseFriend: $isChooseFriend,
+                    name: $name,
+                    description: $description,
+                    date: $date,
+                    courtCost: $courtCost
+                )
             }
         }
     }
-}
-
-#Preview {
-    AddNewEventView(isAddEvent: .constant(true))
 }

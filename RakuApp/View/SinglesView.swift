@@ -1,87 +1,76 @@
-//
-//  SinglesView.swift
-//  RakuApp
-//
-//  Created by student on 03/06/25.
-//
-
 import SwiftUI
+import SwiftData
 
 struct SinglesView: View {
-    @State private var bestOf = 3
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var context
     @State private var gameUpTo = 21
     @State private var maxScore = 30
-
-    @State private var startMatch = false // ✅ 상태 변수 추가
+    @State private var showFriendPicker = false
+    @StateObject private var userVM = UserViewModel()
+    @ObservedObject var matchState: MatchState
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                // 🏸 코트: 2개는 빈 박스, 2개는 선수
-                VStack(spacing: 10) {
-                    HStack(spacing: 20) {
-                        EmptyCourtBox()
-                        SinglePlayerView(name: "Player 1")
-                    }
-                    HStack(spacing: 20) {
-                        SinglePlayerView(name: "Player 2")
-                        EmptyCourtBox()
-                    }
+                Button("Choose Friends") {
+                    showFriendPicker = true
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(12)
+                .sheet(isPresented: $showFriendPicker) {
+                    NavigationView {
+                        MatchFriendView(
+                            userVM: userVM,
+                            selectedUsers: $matchState.selectedUsers,
+                            maxSelection: 2
+                        )
+                    }
+                }
 
-                // 참가자 명단
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Participants")
-                        .font(.headline)
-                    HStack(spacing: 20) {
-                        SingleTeamBox(title: "Team 1", color: Color.blue.opacity(0.1))
-                        SingleTeamBox(title: "Team 2", color: Color.red.opacity(0.1))
+                    Text("Participants").font(.headline)
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 2)) {
+                        ForEach(matchState.selectedUsers.prefix(2), id: \ .id) { user in
+                            PlayerView(name: user.name)
+                        }
                     }
                 }
                 .padding(.horizontal)
 
-                // 설정
                 VStack(spacing: 10) {
-                    SingleSettingRow(title: "Best of", value: $bestOf)
                     SingleSettingRow(title: "Game up to", value: $gameUpTo, highlighted: true)
                     SingleSettingRow(title: "Max Score", value: $maxScore)
                 }
                 .padding(.horizontal)
 
-                // 랜덤 버튼
-                Button("Random Match Detail") {}
-                    .foregroundColor(.blue)
-
-                // 👉 Start Match 버튼
-                Button(action: {
-                    startMatch = true
-                }) {
-                    Text("Start Match")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(12)
+                Button("Start Match") {
+                    matchState.matchType = .single
+                    matchState.blueScore = 0
+                    matchState.redScore = 0
+                    matchState.saveCurrentMatch(gameUpTo: gameUpTo, maxScore: maxScore)
+                    matchState.saveToLocalMatchHistory(context: context)
+                    dismiss()
                 }
-                .padding(.horizontal)
-
-                // 👉 NavigationLink로 ScoreboardView로 이동
-                NavigationLink(destination: ScoreboardView(), isActive: $startMatch) {
-                    EmptyView()
-                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue)
+                .cornerRadius(12)
             }
-            .padding(.vertical)
+            .padding()
+            .onAppear {
+                matchState.selectedUsers = []
+            }
         }
     }
 }
 
 struct SinglePlayerView: View {
     var name: String
-
+    
     var body: some View {
         VStack {
             Image(systemName: "person.crop.circle")
@@ -109,7 +98,7 @@ struct EmptyCourtBox: View {
 struct SingleTeamBox: View {
     let title: String
     let color: Color
-
+    
     var body: some View {
         HStack {
             Text(title)
@@ -127,15 +116,15 @@ struct SingleSettingRow: View {
     var title: String
     @Binding var value: Int
     var highlighted: Bool = false
-
+    
     var body: some View {
         HStack {
             Text("\(title): \(value)")
                 .font(.system(size: 18, weight: .semibold))
                 .padding(.leading)
-
+            
             Spacer()
-
+            
             HStack(spacing: 0) {
                 Button(action: {
                     if value > 1 { value -= 1 }
@@ -144,10 +133,10 @@ struct SingleSettingRow: View {
                         .frame(width: 40, height: 40)
                         .font(.system(size: 24, weight: .medium))
                 }
-
+                
                 Divider()
                     .frame(height: 24)
-
+                
                 Button(action: {
                     value += 1
                 }) {
@@ -167,7 +156,5 @@ struct SingleSettingRow: View {
 }
 
 #Preview {
-    SinglesView()
+    SinglesView(matchState: MatchState())
 }
-
-

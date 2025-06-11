@@ -1,3 +1,5 @@
+// souiyaaa/rakuapp/RakuApp-b4efc2de3e01e479eee184089dffb9fa47c7af7d/RakuApp/View/MapCard.swift
+
 import SwiftUI
 import MapKit
 
@@ -15,11 +17,9 @@ struct MapCard: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            // Map background
             Map(
                 coordinateRegion: $viewModel.region,
                 showsUserLocation: true,
-//                nunjukin titik koordinat yang dicari (map marker)
                 annotationItems: viewModel.selectedLocation.map { [$0] } ?? []
             ) { annotation in
                 MapMarker(coordinate: annotation.coordinate, tint: .red)
@@ -29,9 +29,8 @@ struct MapCard: View {
                 viewModel.hideSearchResults()
             }
 
-            // Foreground overlay: Search bar + ProgressView + Results
+
             VStack(spacing: 8) {
-                // Search bar
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
@@ -55,14 +54,12 @@ struct MapCard: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
 
-                // Progress bar
                 HStack {
                     ProgressView(value: 1)
                         .tint(Color(hex: "1F41BA"))
                 }
                 .padding(.horizontal, 16)
 
-                // Search Results
                 if viewModel.showingSearchResults && !viewModel.searchResults.isEmpty {
                     VStack(spacing: 0) {
                         ForEach(viewModel.searchResults.prefix(5)) { item in
@@ -96,7 +93,6 @@ struct MapCard: View {
                 Spacer()
             }
 
-            // Bottom Sheet for Selected Location
             if let selected = viewModel.selectedLocation {
                 VStack(spacing: 0) {
                     Spacer()
@@ -113,16 +109,17 @@ struct MapCard: View {
                                 .foregroundColor(.gray)
                         }
                         
-                        
-
+                        // FIX: The action for this button is updated
                         Button(action: {
-                            // Action when user confirms location
+                            // 1. Save the match to Firebase
                             gameViewModel.addMatch(name: name, description: description, date: date, courtCost: courtCost, players: arrayUser, location: viewModel.locationString)
-                            print("button pressed")
-                            print(viewModel.locationString)
+                            
+                            // 2. Dismiss all parent sheets to return to MatchView
+                            self.isChooseFriend = false
+                            self.isAddEvent = false
                             
                         }) {
-                            Text("Choose Location")
+                            Text("Choose Location & Create Event") // Updated text
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(Color.blue)
@@ -147,13 +144,4 @@ struct MapCard: View {
         .navigationBarTitleDisplayMode(.inline)
         .animation(.easeInOut, value: viewModel.selectedLocation)
     }
-}
-
-#Preview {
-    let userVM = UserViewModel()
-    let authVM = AuthViewModel(userViewModel: userVM)
-    let gameVM = GameViewModel(userViewModel: userVM)
-    
-    MapCard(isAddEvent: .constant(true), isChooseFriend: .constant(true), name:.constant("Sample Event"), description: .constant("Sample Description"), date: .constant(Date()), courtCost: .constant(1000), arrayUser: .constant([]))
-        .environmentObject(gameVM)
 }

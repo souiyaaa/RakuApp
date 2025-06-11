@@ -8,6 +8,7 @@
 import Firebase
 import FirebaseAppCheck
 import SwiftUI
+import SwiftData // ✅ SwiftData import 추가
 
 @main
 struct RakuAppApp: App {
@@ -18,13 +19,12 @@ struct RakuAppApp: App {
     @StateObject private var activityVM: ActivityViewModel
     @StateObject private var gripVM = GripViewModel()
 
-
     init() {
         FirebaseApp.configure()
 
         #if DEBUG
-            let providerFactory = AppCheckDebugProviderFactory()
-            AppCheck.setAppCheckProviderFactory(providerFactory)
+        let providerFactory = AppCheckDebugProviderFactory()
+        AppCheck.setAppCheckProviderFactory(providerFactory)
         #endif
 
         let userVM = UserViewModel()
@@ -50,6 +50,8 @@ struct RakuAppApp: App {
                 .environmentObject(gripVM)
                 .environmentObject(gameVM)
                 .environmentObject(activityVM)
+                .modelContainer(for: CurrentMatch.self) // ✅ 여기에 SwiftData 컨테이너 추가
         }
     }
 }
+

@@ -135,9 +135,4 @@ class UserViewModel: ObservableObject {
             }
         }
     }
-    
-    
-
-    
-    
 }
