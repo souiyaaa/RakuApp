@@ -15,6 +15,7 @@ class GripViewModel: ObservableObject {
             imageClassifier = try BadmintonGrip(configuration: MLModelConfiguration())
         } catch {
             print("Failed to load model: \(error)")
+            
         }
     }
 
