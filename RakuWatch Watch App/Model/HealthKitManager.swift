@@ -28,6 +28,7 @@ class HealthKitManager {
             }
         }
     }
+//    ini watch
 
     func fetchTodayCalories() async -> Double {
         let type = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
