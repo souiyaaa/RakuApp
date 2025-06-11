@@ -4,6 +4,8 @@ import SwiftUI
 import PhotosUI
 import UIKit
 
+
+
 class GripViewModel: ObservableObject {
     @Published var selectedImage: UIImage?
     @Published var classLabel: String = ""
@@ -15,6 +17,7 @@ class GripViewModel: ObservableObject {
             imageClassifier = try BadmintonGrip(configuration: MLModelConfiguration())
         } catch {
             print("Failed to load model: \(error)")
+            
         }
     }
 

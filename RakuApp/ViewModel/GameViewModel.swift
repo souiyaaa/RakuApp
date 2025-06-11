@@ -4,57 +4,63 @@ import FirebaseDatabase
 import Foundation
 
 class GameViewModel: ObservableObject {
-    @Published var matches = [Match]()
+//    @Published var matches = [Match]()
     private var ref: DatabaseReference
     @Published var userViewModel: UserViewModel
     @Published var currentMatch: Match?
+    @Published var matches: [Match] = []
+
 
     init(userViewModel: UserViewModel) {
         self.userViewModel = userViewModel
-        self.ref = Database.database().reference().child("matches")
-        // FIX: DO NOT fetch matches here. The user is not yet loaded.
-        // fetchMatches()
+        self.ref = Database.database().reference().child("Matches")
+        fetchMatches(for: nil)
     }
 
-    func fetchMatches() {
-        let currentUserId = userViewModel.myUserData.id
-        
-        // FIX: Add a guard to prevent fetching if the user ID is not yet available.
-        guard !currentUserId.isEmpty else {
-            print("User ID not available yet. Skipping match fetch.")
-            return
-        }
-        
-        ref.observe(.value) { snapshot in
-            guard let value = snapshot.value as? [String: Any] else {
-                self.matches = []
-                return
-            }
 
-            let filteredMatches = value.compactMap {
-                (key, matchData) -> Match? in
-                guard let matchDict = matchData as? [String: Any],
-                    let jsonData = try? JSONSerialization.data(
-                        withJSONObject: matchDict),
-                    let match = try? JSONDecoder().decode(
-                        Match.self, from: jsonData)
-                else {
-                    return nil
+    func fetchMatches(for date: Date?) {
+        ref.observeSingleEvent(of: .value) { snapshot in
+                guard let value = snapshot.value as? [String: Any] else {
+                    DispatchQueue.main.async {
+                        self.matches = []
+                    }
+                    print("❌ Matches snapshot is empty or invalid.")
+                    return
                 }
 
-                let playerIds = match.players.map { $0.id }
-                if playerIds.contains(currentUserId) {
+                let loadedMatches = value.compactMap { (key, rawData) -> Match? in
+                    guard let matchDict = rawData as? [String: Any],
+                          let jsonData = try? JSONSerialization.data(withJSONObject: matchDict),
+                          let match = try? JSONDecoder().decode(Match.self, from: jsonData)
+                    else {
+                        print("❌ Failed to decode match with key: \(key)")
+                        return nil
+                    }
                     return match
+                }
+
+                // Filter matches by selected date if provided
+                if let selectedDate = date {
+                    let calendar = Calendar.current
+                    let filteredMatches = loadedMatches.filter {
+                        calendar.isDate($0.date, inSameDayAs: selectedDate)
+                    }
+
+                    DispatchQueue.main.async {
+                        self.matches = filteredMatches
+                        print("✅ Loaded \(filteredMatches.count) matches for selected date.")
+                    }
                 } else {
-                    return nil
+                    DispatchQueue.main.async {
+                        self.matches = loadedMatches
+                        print("✅ Loaded all \(loadedMatches.count) matches.")
+                    }
                 }
             }
-
-            DispatchQueue.main.async {
-                self.matches = filteredMatches
-            }
         }
-    }
+    
+
+
     
     // The rest of your GameViewModel code remains the same...
     // addMatch, updateMatch, etc. are all correct.
@@ -98,7 +104,7 @@ class GameViewModel: ObservableObject {
         let newMatch = Match(
             name: name,
             description: description,
-            date: date,
+            date: date, // keep as Date in the struct
             courtCost: courtCost,
             players: finalPlayers,
             games: [],
@@ -106,24 +112,29 @@ class GameViewModel: ObservableObject {
             location: location
         )
 
+        // Prepare JSON object for Firebase
         guard let jsonData = try? JSONEncoder().encode(newMatch),
-            let json = try? JSONSerialization.jsonObject(with: jsonData)
-                as? [String: Any]
-        else {
+              var jsonObject = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] else {
             print("function failed to add match")
             return false
         }
 
-        ref.child(newMatch.id).setValue(json)
-        
+        // Store date as timestamp (Double)
+        jsonObject["date"] = date.timeIntervalSince1970
+
+        // Save to Firebase
+        ref.child(newMatch.id).setValue(jsonObject)
+
+        // Update local state
         DispatchQueue.main.async {
             self.matches.append(newMatch)
         }
-        
+
         print(newMatch)
         print("function is done ")
         return true
     }
+
 
     func updateMatch(_ match: Match) {
             guard let jsonData = try? JSONEncoder().encode(match),

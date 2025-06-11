@@ -28,7 +28,9 @@ class HealthKitManager {
             }
         }
     }
-
+//    ini watch
+// test
+//    halo
     func fetchTodayCalories() async -> Double {
         let type = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
         return await fetchSum(for: type, unit: .kilocalorie())

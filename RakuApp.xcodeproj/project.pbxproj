@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D83D00E52DF06D4400B39B08 /* RakuWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D83D00D82DF06D4200B39B08 /* RakuWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D83D00E92DF06D6600B39B08 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD403D92DE99C010017EB30 /* WatchConnectivity.framework */; };
+		D83D00EA2DF06D7200B39B08 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD403D72DE99BF90017EB30 /* WatchConnectivity.framework */; };
 		D8E286082DDE14120038DA9A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D8E286072DDE14120038DA9A /* FirebaseAnalytics */; };
 		D8E2860A2DDE14120038DA9A /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = D8E286092DDE14120038DA9A /* FirebaseAppCheck */; };
 		D8E2860C2DDE14120038DA9A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D8E2860B2DDE14120038DA9A /* FirebaseAuth */; };
@@ -16,8 +19,6 @@
 		D8E2861A2DDE1D440038DA9A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D8E286192DDE1D440038DA9A /* GoogleSignInSwift */; };
 /* End PBXBuildFile section */
 
-<<<<<<< Updated upstream
-=======
 /* Begin PBXContainerItemProxy section */
 		D80EDE112DF974D1001F4CFA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -49,7 +50,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
->>>>>>> Stashed changes
 /* Begin PBXCopyFilesBuildPhase section */
 		3FD403D12DE99BD90017EB30 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -57,6 +57,7 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
+				D83D00E52DF06D4400B39B08 /* RakuWatch Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -66,14 +67,6 @@
 /* Begin PBXFileReference section */
 		3FD403D72DE99BF90017EB30 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS11.2.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 		3FD403D92DE99C010017EB30 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
-<<<<<<< Updated upstream
-		D8E2859E2DDE0FBB0038DA9A /* RakuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RakuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-/* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		D8E285A02DDE0FBB0038DA9A /* RakuApp */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-=======
 		D80EDE0D2DF974D1001F4CFA /* ActivityViewModelTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ActivityViewModelTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D83D00D82DF06D4200B39B08 /* RakuWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RakuWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8504B992DF95F9000059F6D /* GripTesting.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GripTesting.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -135,15 +128,12 @@
 				D8504BA32DF95FB500059F6D /* Exceptions for "RakuApp" folder in "GripTesting" target */,
 				D80EDE172DF974E7001F4CFA /* Exceptions for "RakuApp" folder in "ActivityViewModelTest" target */,
 			);
->>>>>>> Stashed changes
 			path = RakuApp;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-<<<<<<< Updated upstream
-=======
 		D80EDE0A2DF974D1001F4CFA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -173,7 +163,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
->>>>>>> Stashed changes
 		D8E2859B2DDE0FBB0038DA9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -183,6 +172,7 @@
 				D8E2861A2DDE1D440038DA9A /* GoogleSignInSwift in Frameworks */,
 				D8E2860C2DDE14120038DA9A /* FirebaseAuth in Frameworks */,
 				D8E2860E2DDE14120038DA9A /* FirebaseCore in Frameworks */,
+				D83D00E92DF06D6600B39B08 /* WatchConnectivity.framework in Frameworks */,
 				D8E286082DDE14120038DA9A /* FirebaseAnalytics in Frameworks */,
 				D8E286182DDE1D440038DA9A /* GoogleSignIn in Frameworks */,
 			);
@@ -204,14 +194,11 @@
 			isa = PBXGroup;
 			children = (
 				D8E285A02DDE0FBB0038DA9A /* RakuApp */,
-<<<<<<< Updated upstream
-=======
 				D83D00D92DF06D4200B39B08 /* RakuWatch Watch App */,
 				D8504B8D2DF95E6800059F6D /* MLTesting */,
 				D8504B9A2DF95F9000059F6D /* GripTesting */,
 				D8504BA92DF9614500059F6D /* GripTesting2 */,
 				D80EDE0E2DF974D1001F4CFA /* ActivityViewModelTest */,
->>>>>>> Stashed changes
 				3FD403D62DE99BF90017EB30 /* Frameworks */,
 				D8E2859F2DDE0FBB0038DA9A /* Products */,
 			);
@@ -221,13 +208,10 @@
 			isa = PBXGroup;
 			children = (
 				D8E2859E2DDE0FBB0038DA9A /* RakuApp.app */,
-<<<<<<< Updated upstream
-=======
 				D83D00D82DF06D4200B39B08 /* RakuWatch Watch App.app */,
 				D8504B992DF95F9000059F6D /* GripTesting.xctest */,
 				D8504BA82DF9614500059F6D /* GripTesting2.xctest */,
 				D80EDE0D2DF974D1001F4CFA /* ActivityViewModelTest.xctest */,
->>>>>>> Stashed changes
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -235,8 +219,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-<<<<<<< Updated upstream
-=======
 		D80EDE0C2DF974D1001F4CFA /* ActivityViewModelTest */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D80EDE152DF974D1001F4CFA /* Build configuration list for PBXNativeTarget "ActivityViewModelTest" */;
@@ -328,7 +310,6 @@
 			productReference = D8504BA82DF9614500059F6D /* GripTesting2.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
->>>>>>> Stashed changes
 		D8E2859D2DDE0FBB0038DA9A /* RakuApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D8E285AC2DDE0FBC0038DA9A /* Build configuration list for PBXNativeTarget "RakuApp" */;
@@ -341,6 +322,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D83D00E42DF06D4400B39B08 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				D8E285A02DDE0FBB0038DA9A /* RakuApp */,
@@ -369,8 +351,6 @@
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
-<<<<<<< Updated upstream
-=======
 					D80EDE0C2DF974D1001F4CFA = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = D8E2859D2DDE0FBB0038DA9A;
@@ -386,7 +366,6 @@
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = D8E2859D2DDE0FBB0038DA9A;
 					};
->>>>>>> Stashed changes
 					D8E2859D2DDE0FBB0038DA9A = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -411,20 +390,15 @@
 			projectRoot = "";
 			targets = (
 				D8E2859D2DDE0FBB0038DA9A /* RakuApp */,
-<<<<<<< Updated upstream
-=======
 				D83D00D72DF06D4200B39B08 /* RakuWatch Watch App */,
 				D8504B982DF95F9000059F6D /* GripTesting */,
 				D8504BA72DF9614500059F6D /* GripTesting2 */,
 				D80EDE0C2DF974D1001F4CFA /* ActivityViewModelTest */,
->>>>>>> Stashed changes
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-<<<<<<< Updated upstream
-=======
 		D80EDE0B2DF974D1001F4CFA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -453,7 +427,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
->>>>>>> Stashed changes
 		D8E2859C2DDE0FBB0038DA9A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -464,8 +437,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-<<<<<<< Updated upstream
-=======
 		D80EDE092DF974D1001F4CFA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -494,7 +465,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
->>>>>>> Stashed changes
 		D8E2859A2DDE0FBB0038DA9A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -504,9 +474,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-<<<<<<< Updated upstream
-/* Begin XCBuildConfiguration section */
-=======
 /* Begin PBXTargetDependency section */
 		D80EDE122DF974D1001F4CFA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -703,7 +670,6 @@
 			};
 			name = Release;
 		};
->>>>>>> Stashed changes
 		D8E285AA2DDE0FBC0038DA9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -896,8 +862,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-<<<<<<< Updated upstream
-=======
 		D80EDE152DF974D1001F4CFA /* Build configuration list for PBXNativeTarget "ActivityViewModelTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -934,7 +898,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
->>>>>>> Stashed changes
 		D8E285992DDE0FBA0038DA9A /* Build configuration list for PBXProject "RakuApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

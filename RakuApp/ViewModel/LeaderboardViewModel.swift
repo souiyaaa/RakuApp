@@ -24,11 +24,11 @@ class LeaderboardViewModel: ObservableObject {
         case "beginner":
             return 100
         case "intermediate":
-            return 500
+            return 350
         case "advanced":
-            return 1000
+            return 500
         case "expert":
-            return 2000
+            return 600
         default:
             return 50 // Poin default untuk level pengalaman lainnya
         }
