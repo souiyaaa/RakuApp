@@ -1,5 +1,3 @@
-// souiyaaa/rakuapp/RakuApp-b4efc2de3e01e479eee184089dffb9fa47c7af7d/RakuApp/View/MatchView.swift
-
 import SwiftUI
 import SwiftData
 
@@ -18,121 +16,92 @@ struct MatchView: View {
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     private var filteredMatches: [Match] {
-        guard let selectedDate = calendarVM.selectedDay else {
-            return []
-        }
-        return gameVM.matches.filter { match in
-            Calendar.current.isDate(match.date, inSameDayAs: selectedDate)
-        }
+        guard let selectedDate = calendarVM.selectedDay else { return [] }
+        return gameVM.matches.filter { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }
     }
 
     var body: some View {
         NavigationStack {
-            VStack {
-                // User info row
-                HStack {
-                    if let uiImage = authVM.userViewModel.myUserPicture {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 50, height: 50)
-                            .clipShape(Circle())
-                    } else {
-                        Image(systemName: "person.crop.circle.fill")
-                            .resizable()
-                            .frame(width: 50, height: 50)
-                            .foregroundColor(.gray)
-                    }
-                    VStack(alignment: .leading) {
-                        HStack {
+            ScrollView {
+                VStack(spacing: 16) {
+
+                    // User Info Section
+                    HStack {
+                        if let uiImage = authVM.userViewModel.myUserPicture {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 50, height: 50)
+                                .clipShape(Circle())
+                        } else {
+                            Image(systemName: "person.crop.circle.fill")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(.gray)
+                        }
+
+                        VStack(alignment: .leading) {
                             Text("\(authVM.userViewModel.myUserData.name.isEmpty ? "User" : authVM.userViewModel.myUserData.name) you are at")
                                 .font(.body)
-                            Spacer()
-                        }
-                        HStack {
                             Text(matchVM.userLocationDescription)
                                 .font(.headline)
-                            Spacer()
-                        }
-                        Button(action: {
-                            matchVM.refreshLocation()
-                        }) {
-                            HStack {
-                                Image(systemName: "arrow.clockwise.circle")
-                                Text("Refresh Location")
+                            Button {
+                                matchVM.refreshLocation()
+                            } label: {
+                                Label("Refresh Location", systemImage: "arrow.clockwise.circle")
                             }
                         }
-                    }
-                    .padding(.horizontal, 4)
+                        .padding(.horizontal, 4)
 
-                    Button("Logout") {
-                        authVM.signOut()
-                    }
-                    .foregroundColor(.red)
-                    .font(.headline)
-                    .padding()
-                }
-                .padding()
+                        Spacer()
 
-                // Current Match Section
-                HStack {
-                    Text("Current match")
-                    Spacer()
-                    Button("More") {}
-                        .foregroundColor(Color(hex: "253366"))
-                        .font(.headline)
-                }
-                .padding(.horizontal, 20)
-
-                if let match = latestMatch {
-                    MatchCardView(match: match, currentTime: currentTime)
-                        .padding(.horizontal)
-                } else {
-                    Text("No current match")
-                        .foregroundColor(.gray)
-                        .padding()
-                }
-
-                // Events Section
-                HStack {
-                    Text("Events")
-                        .font(.headline)
-                    Spacer()
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
-                .padding(.bottom, 4)
-
-                CalendarView(viewModel: calendarVM)
-
-                EventInvitationView(matches: filteredMatches, currentUser: authVM.userViewModel.myUserData)
-
-                Spacer()
-
-                // Quick Match Button
-                HStack {
-                    Spacer()
-                    NavigationLink(
-                        destination:
-                            MatchDetailView(matchState: matchState)
-                            .environment(\.modelContext, context)
-                    ) {
-                        HStack {
-                            Image(systemName: "bolt.fill")
-                            Text("Quick Match")
-                                .fontWeight(.semibold)
+                        Button("Logout") {
+                            authVM.signOut()
                         }
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
+                        .foregroundColor(.red)
+                    }
+                    .padding()
+
+                    // Current Match Section
+                    HStack {
+                        Text("Current match")
+                        Spacer()
+                        NavigationLink(
+                            destination: MatchDetailView(matchState: matchState)
+                                .environment(\.modelContext, context)
+                        ) {
+                            Text("More")
+                                .foregroundColor(Color(hex: "253366"))
+                                .font(.headline)
+                        }
                     }
                     .padding(.horizontal)
-                    Spacer()
-                }
-                .padding(.vertical, 10)
 
-                Spacer()
+                    if let match = latestMatch {
+                        MatchCardView(match: match, currentTime: currentTime)
+                            .padding(.horizontal)
+                    } else {
+                        Text("No current match")
+                            .foregroundColor(.gray)
+                            .padding()
+                    }
+
+                    // Events Section
+                    HStack {
+                        Text("Events")
+                            .font(.headline)
+                        Spacer()
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 12)
+
+                    CalendarView(viewModel: calendarVM)
+
+                    EventInvitationView(matches: filteredMatches, currentUser: authVM.userViewModel.myUserData)
+
+                    Spacer(minLength: 40)
+                }
+                .padding(.top)
             }
             .background(Color(hex: "F7F7F7"))
             .navigationTitle("Matches")
@@ -142,33 +111,32 @@ struct MatchView: View {
                     AddNewEventView(isAddEvent: $isAddEvent)
                 }
             }
-            .onChange(of: authVM.userViewModel.myUserData.id) { newUserId in
-                if !newUserId.isEmpty {
-                    gameVM.fetchMatches()
-                    loadLatestMatch()
-                }
-            }
-            .task {
+            .onAppear {
+                gameVM.fetchMatches(for: calendarVM.selectedDay ?? Date())
                 loadLatestMatch()
             }
+            .onChange(of: calendarVM.selectedDay) { date in
+                if let date = date {
+                    gameVM.fetchMatches(for: date)
+                }
+            }
+//            .onChange(of: authVM.userViewModel.myUserData.id) { newUserId in
+//                if !newUserId.isEmpty {
+//                    gameVM.fetchMatches()
+//                    loadLatestMatch()
+//                }
+//            }
             .onReceive(timer) { _ in
                 let formatter = DateFormatter()
                 formatter.dateFormat = "HH:mm"
                 currentTime = formatter.string(from: Date())
-            }
-
-            .onChange(of: authVM.userViewModel.myUserData.id) { newUserId in
-                if !newUserId.isEmpty {
-                    gameVM.fetchMatches()
-                    loadLatestMatch()
-                }
             }
         }
     }
 
     func loadLatestMatch() {
         let uid = authVM.userViewModel.myUserData.id
-        if uid.isEmpty {
+        guard !uid.isEmpty else {
             print("❌ No user logged in")
             return
         }
@@ -185,15 +153,4 @@ struct MatchView: View {
             print("❌ Failed to fetch latest match: \(error.localizedDescription)")
         }
     }
-}
-
-#Preview {
-    let container = try! ModelContainer(for: CurrentMatch.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-    return MatchView()
-        .environmentObject(AuthViewModel(userViewModel: UserViewModel()))
-        .environmentObject(GameViewModel(userViewModel: UserViewModel()))
-        .environmentObject(MatchViewModel())
-        .environmentObject(ActivityViewModel(authViewModel: AuthViewModel(userViewModel: UserViewModel())))
-        .environmentObject(GripViewModel())
-        .modelContainer(container)
 }

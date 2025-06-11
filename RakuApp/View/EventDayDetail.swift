@@ -57,19 +57,19 @@ struct EventRowView: View {
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
 
-                        NavigationLink(destination: MatchDetailView()) {
-                            HStack {
-                                Image(systemName: "bolt.fill")
-                                Text("Quick Match")
-                                    .fontWeight(.semibold)
-                            }
-                            .font(.callout)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 16)
-                            .background(Color.white.opacity(0.3))
-                            .foregroundColor(.white)
-                            .cornerRadius(20)
-                        }
+//                        NavigationLink(destination: MatchDetailView()) {
+//                            HStack {
+//                                Image(systemName: "bolt.fill")
+//                                Text("Quick Match")
+//                                    .fontWeight(.semibold)
+//                            }
+//                            .font(.callout)
+//                            .padding(.vertical, 8)
+//                            .padding(.horizontal, 16)
+//                            .background(Color.white.opacity(0.3))
+//                            .foregroundColor(.white)
+//                            .cornerRadius(20)
+//                        }
                     }
                     .padding()
 

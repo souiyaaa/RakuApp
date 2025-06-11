@@ -103,6 +103,7 @@ class MatchState: ObservableObject {
         self.maxScore = maxScore
         self.hasStarted = true
     }
+    
 }
 
 // Codable 구조체
