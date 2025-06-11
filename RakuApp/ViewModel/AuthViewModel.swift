@@ -16,7 +16,7 @@ class AuthViewModel: ObservableObject {
     @Published var isSignedIn: Bool
     @Published var falseCredential: Bool
 
-    let userViewModel: UserViewModel
+   public let userViewModel: UserViewModel
 
     init(userViewModel: UserViewModel) {
         self.userViewModel = userViewModel
