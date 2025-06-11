@@ -48,7 +48,7 @@ struct WeeklySumView: View {
                         Text("Total game")
                             .font(.caption)
                             .foregroundStyle(.gray)
-                        Text("9 Games")
+                        Text("5 Games")
                             .font(.body)
                             .bold()
                     }

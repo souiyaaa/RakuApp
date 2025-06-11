@@ -8,24 +8,24 @@ struct LeaderboardView: View {
 
                 PodiumPlaceView(
                     rank: "2",
-                    name: "Ardi",
-                    points: "80 points",
+                    name: "Surya",
+                    points: "800 points",
                     color: Color(white: 0.8)
                 )
                 .frame(width: podiumWidth, height: geometry.size.height * 0.75)
 
                 PodiumPlaceView(
                     rank: "1",
-                    name: "Josua",
-                    points: "150 points",
+                    name: "Delvincent",
+                    points: "1500 points",
                     color: .yellow
                 )
                 .frame(width: podiumWidth, height: geometry.size.height * 0.9)
 
                 PodiumPlaceView(
                     rank: "3",
-                    name: "Surya",
-                    points: "70 points",
+                    name: "Yubin",
+                    points: "700 points",
                     color: Color(red: 0.8, green: 0.5, blue: 0.2)
                 )
                 .frame(width: podiumWidth, height: geometry.size.height * 0.65)
